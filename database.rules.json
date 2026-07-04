@@ -7,13 +7,13 @@
           ".write": "!data.exists()"
         },
         "status": {
-          ".write": "auth != null && auth.uid === root.child('sessions').child($sessionCode).child('hostUid').val()"
+          ".write": "auth != null && auth.uid === newData.parent().child('hostUid').val()"
         },
         "createdAt": {
           ".write": "!data.exists()"
         },
         "currentQuestion": {
-          ".write": "auth != null && auth.uid === root.child('sessions').child($sessionCode).child('hostUid').val()"
+          ".write": "auth != null && auth.uid === newData.parent().child('hostUid').val()"
         },
         "players": {
           "$uid": {

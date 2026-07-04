@@ -1,4 +1,1325 @@
 {
-  "version": 1,
-  "questions": []
+    "version":  1,
+    "questions":  [
+                      {
+                          "category":  24,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Who was the British Prime Minister at the outbreak of the Second World War?",
+                                     "correct":  "Neville Chamberlain",
+                                     "incorrect":  [
+                                                       "Clement Attlee",
+                                                       "Winston Churchill",
+                                                       "Stanley Baldwin"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wer war der britische Premierminister zu Beginn des Zweiten Weltkriegs?",
+                                     "correct":  "Neville Chamberlain",
+                                     "incorrect":  [
+                                                       "Clement Attlee",
+                                                       "Winston Churchill",
+                                                       "Stanley Baldwin"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  29,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Who is the second person to take up the mantle of Night Owl in the Watchmen graphic novel?",
+                                     "correct":  "Daniel Dreiberg",
+                                     "incorrect":  [
+                                                       "Nelson Gardner",
+                                                       "Hollis Mason",
+                                                       "Adrian Veidt"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wer ist die zweite Person, die die Rolle des Night Owl im Watchmen-Graphic-Novel übernimmt?",
+                                     "correct":  "Daniel Dreiberg",
+                                     "incorrect":  [
+                                                       "Nelson Gardner",
+                                                       "Hollis Mason",
+                                                       "Adrian Veidt"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  19,
+                          "difficulty":  "hard",
+                          "en":  {
+                                     "q":  "Which of the following famous mathematicians died in a duel at the age of 20?",
+                                     "correct":  "Galois",
+                                     "incorrect":  [
+                                                       "Abel",
+                                                       "Euler",
+                                                       "Gauss"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welcher der folgenden berühmten Mathematiker starb im Alter von 20 Jahren in einem Duell?",
+                                     "correct":  "Galois",
+                                     "incorrect":  [
+                                                       "Abel",
+                                                       "Euler",
+                                                       "Gauss"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  22,
+                          "difficulty":  "hard",
+                          "en":  {
+                                     "q":  "In which city is the Big Nickel located in Canada?",
+                                     "correct":  "Sudbury, Ontario",
+                                     "incorrect":  [
+                                                       "Calgary, Alberta",
+                                                       "Halifax, Nova Scotia ",
+                                                       "Victoria, British Columbia"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "In welcher Stadt befindet sich der Big Nickel in Kanada?",
+                                     "correct":  "Sudbury, Ontario",
+                                     "incorrect":  [
+                                                       "Calgary, Alberta",
+                                                       "Halifax, Nova Scotia",
+                                                       "Victoria, British Columbia"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "Who is the main antagonist in the Portal franchise?",
+                                     "correct":  "GLaDOS",
+                                     "incorrect":  [
+                                                       "Chell",
+                                                       "Wheatley",
+                                                       "Rick"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wer ist der Hauptantagonist in der Portal-Spielreihe?",
+                                     "correct":  "GLaDOS",
+                                     "incorrect":  [
+                                                       "Chell",
+                                                       "Wheatley",
+                                                       "Rick"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  21,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Which NBA player won Most Valuable Player for the 1999-2000 season?",
+                                     "correct":  "Shaquille O\u0027Neal",
+                                     "incorrect":  [
+                                                       "Allen Iverson",
+                                                       "Kobe Bryant",
+                                                       "Paul Pierce"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welcher NBA-Spieler gewann die MVP-Auszeichnung für die Saison 1999-2000?",
+                                     "correct":  "Shaquille O\u0027Neal",
+                                     "incorrect":  [
+                                                       "Allen Iverson",
+                                                       "Kobe Bryant",
+                                                       "Paul Pierce"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "What year was the game \"Overwatch\" revealed?",
+                                     "correct":  "2014",
+                                     "incorrect":  [
+                                                       "2015",
+                                                       "2011",
+                                                       "2008"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "In welchem Jahr wurde das Spiel \"Overwatch\" enthüllt?",
+                                     "correct":  "2014",
+                                     "incorrect":  [
+                                                       "2015",
+                                                       "2011",
+                                                       "2008"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "What is the default alias that Princess Garnet goes by in Final Fantasy IX?",
+                                     "correct":  "Dagger",
+                                     "incorrect":  [
+                                                       "Dirk",
+                                                       "Garnet",
+                                                       "Quina"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie heißt der Standard-Alias, unter dem sich Prinzessin Garnet in Final Fantasy IX vorstellt?",
+                                     "correct":  "Dagger",
+                                     "incorrect":  [
+                                                       "Dirk",
+                                                       "Garnet",
+                                                       "Quina"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  12,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Prior to going solo in 1982, Lionel Richie was a member of which Motown group?",
+                                     "correct":  "The Commodores",
+                                     "incorrect":  [
+                                                       "The Temptations",
+                                                       "The Miracles",
+                                                       "The Supremes"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Vor seinem Solo-Debut 1982 war Lionel Richie Mitglied welcher Motown-Gruppe?",
+                                     "correct":  "The Commodores",
+                                     "incorrect":  [
+                                                       "The Temptations",
+                                                       "The Miracles",
+                                                       "The Supremes"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  17,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "In aeronautics, flaps and slats are used to control what on an aircraft?",
+                                     "correct":  "Lift",
+                                     "incorrect":  [
+                                                       "Thrust",
+                                                       "Drag",
+                                                       "Weight "
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "In der Luftfahrt werden Klappen und Vorflügel verwendet, um was an einem Flugzeug zu kontrollieren?",
+                                     "correct":  "Auftrieb",
+                                     "incorrect":  [
+                                                       "Schub",
+                                                       "Widerstand",
+                                                       "Gewicht"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  17,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Which desert is the only desert in the world where the \"Saguaro\" cactus grows indigenously?",
+                                     "correct":  "The Sonoran Desert",
+                                     "incorrect":  [
+                                                       "The Gobi Desert",
+                                                       "The Yuma Desert",
+                                                       "The Arabian Desert"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welche Wüste ist die einzige Wüste der Welt, in der der Saguaro-Kaktus von Natur aus vorkommt?",
+                                     "correct":  "Die Sonora-Wüste",
+                                     "incorrect":  [
+                                                       "Die Gobi-Wüste",
+                                                       "Die Yuma-Wüste",
+                                                       "Die Arabische Wüste"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Which unlockable character in Super Smash Bros. For Wii U and 3DS does not have to be fought to be unlocked?",
+                                     "correct":  "Mii Fighters",
+                                     "incorrect":  [
+                                                       "Ness",
+                                                       "R.O.B.",
+                                                       "Mewtwo"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welcher freilegbare Charakter in Super Smash Bros. For Wii U und 3DS muss nicht besiegt werden, um freigeschaltet zu werden?",
+                                     "correct":  "Mii Fighters",
+                                     "incorrect":  [
+                                                       "Ness",
+                                                       "R.O.B.",
+                                                       "Mewtwo"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  31,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "What is the name of the stuffed lion in Bleach?",
+                                     "correct":  "Kon",
+                                     "incorrect":  [
+                                                       "Jo",
+                                                       "Urdiu",
+                                                       "Chad"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie heißt das Plüschlöwchen in Bleach?",
+                                     "correct":  "Kon",
+                                     "incorrect":  [
+                                                       "Jo",
+                                                       "Uryu",
+                                                       "Chad"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  9,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "In a standard set of playing cards, which is the only king without a moustache?",
+                                     "correct":  "Hearts",
+                                     "incorrect":  [
+                                                       "Spades",
+                                                       "Diamonds",
+                                                       "Clubs"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welcher König in einem Standard-Kartendeck ist der einzige ohne Schnurrbart?",
+                                     "correct":  "Herz",
+                                     "incorrect":  [
+                                                       "Pik",
+                                                       "Karo",
+                                                       "Kreuz"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  23,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "Which of the following countries was not an axis power during World War II?",
+                                     "correct":  " Soviet Union",
+                                     "incorrect":  [
+                                                       "Italy",
+                                                       "Germany",
+                                                       "Japan"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welches der folgenden Länder war keine Achsenmacht während des Zweiten Weltkriegs?",
+                                     "correct":  "Sowjetunion",
+                                     "incorrect":  [
+                                                       "Italien",
+                                                       "Deutschland",
+                                                       "Japan"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "hard",
+                          "en":  {
+                                     "q":  "According to the lore of \"Starbound\", what does the \"Colony Deed\" do when it is placed down?",
+                                     "correct":  "Sends out an advertisement for someone to move in.",
+                                     "incorrect":  [
+                                                       "Teleports somebody from somewhere on the planet it is placed.",
+                                                       "Teleports a random person to the location.",
+                                                       "Materializes a new being at it\u0027s location."
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Was bewirkt laut der Lore von \"Starbound\" die \"Colony Deed\", wenn sie platziert wird?",
+                                     "correct":  "Sie sendet eine Anzeige aus, damit jemand einzieht.",
+                                     "incorrect":  [
+                                                       "Sie teleportiert jemanden von irgendwo auf dem Planeten, auf dem sie platziert ist.",
+                                                       "Sie teleportiert eine zufällige Person an den Standort.",
+                                                       "Sie materialisiert ein neues Wesen an ihrem Standort."
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  12,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "\u0027The Safety Dance\u0027 was the biggest hit single for which Canadian act?",
+                                     "correct":  "Men Without Hats",
+                                     "incorrect":  [
+                                                       "Crash Test Dummies",
+                                                       "The Tragically Hip",
+                                                       "Broken Social Scene"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "\"The Safety Dance\" war der größte Hit-Single welches kanadischen Acts?",
+                                     "correct":  "Men Without Hats",
+                                     "incorrect":  [
+                                                       "Crash Test Dummies",
+                                                       "The Tragically Hip",
+                                                       "Broken Social Scene"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  12,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "La Fenice opera house is in which Italian city?",
+                                     "correct":  "Venice",
+                                     "incorrect":  [
+                                                       "Milan",
+                                                       "Rome",
+                                                       "Pompeii"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Das Opernhaus La Fenice befindet sich in welcher italienischen Stadt?",
+                                     "correct":  "Venedig",
+                                     "incorrect":  [
+                                                       "Mailand",
+                                                       "Rom",
+                                                       "Pompeji"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  16,
+                          "difficulty":  "hard",
+                          "en":  {
+                                     "q":  "What is the sum of all the tiles in a standard box of Scrabble?",
+                                     "correct":  "187",
+                                     "incorrect":  [
+                                                       "207",
+                                                       "197",
+                                                       "177"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie viele Punkte ergeben alle Spielsteine in einer Standard-Box Scrabble zusammen?",
+                                     "correct":  "187",
+                                     "incorrect":  [
+                                                       "207",
+                                                       "197",
+                                                       "177"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  13,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "In which Shakespearean play will you find the suicide of Ophelia?",
+                                     "correct":  "Hamlet",
+                                     "incorrect":  [
+                                                       "Macbeth",
+                                                       "Othello",
+                                                       "King Lear"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "In welchem Shakespeare-Stück findet der Selbstmord von Ophelia statt?",
+                                     "correct":  "Hamlet",
+                                     "incorrect":  [
+                                                       "Macbeth",
+                                                       "Othello",
+                                                       "König Lear"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  31,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "In the 2011 TV anime series, \"THE iDOLM@STER\", what was the name of Iori\u0027s stuffed toy bunny?",
+                                     "correct":  "Charles",
+                                     "incorrect":  [
+                                                       "Bubsy",
+                                                       "Kero",
+                                                       "Usagi"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "In der Anime-Serie \"THE iDOLM@STER\" von 2011 – wie hieß Iris Plüsch-Häschen?",
+                                     "correct":  "Charles",
+                                     "incorrect":  [
+                                                       "Bubsy",
+                                                       "Kero",
+                                                       "Usagi"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Who voices Max Payne in the 2001 game \"Max Payne\"?",
+                                     "correct":  "James McCaffrey",
+                                     "incorrect":  [
+                                                       "Sam Lake",
+                                                       "Troy Baker",
+                                                       "Hideo Kojima"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wer spricht Max Payne im Spiel \"Max Payne\" von 2001?",
+                                     "correct":  "James McCaffrey",
+                                     "incorrect":  [
+                                                       "Sam Lake",
+                                                       "Troy Baker",
+                                                       "Hideo Kojima"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  11,
+                          "difficulty":  "hard",
+                          "en":  {
+                                     "q":  "Which actress portrayed Dr. Grace Augustine in the James Cameron movie \"Avatar\"?",
+                                     "correct":  "Sigourney Weaver",
+                                     "incorrect":  [
+                                                       "Jessica Chastain",
+                                                       "Melissa Beckett",
+                                                       "Alyssa Monroe "
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welche Schauspielerin verkörpert Dr. Grace Augustine in James Camerons Film \"Avatar\"?",
+                                     "correct":  "Sigourney Weaver",
+                                     "incorrect":  [
+                                                       "Jessica Chastain",
+                                                       "Melissa Beckett",
+                                                       "Alyssa Monroe"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  20,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Which greek god/goddess tossed a golden apple with the words \"for the fairest\" into the middle of the feast of the gods?",
+                                     "correct":  "Eris",
+                                     "incorrect":  [
+                                                       "Hades",
+                                                       "Ares",
+                                                       "Artemis"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welche griechische Gottheit warf einen goldenen Apfel mit der Aufschrift \"für die Schönste\" in die Mitte des Götter-Festmahls?",
+                                     "correct":  "Eris",
+                                     "incorrect":  [
+                                                       "Hades",
+                                                       "Ares",
+                                                       "Artemis"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  22,
+                          "difficulty":  "hard",
+                          "en":  {
+                                     "q":  "How many countries share a land border with Russia? (Not including disputed territories)",
+                                     "correct":  "14",
+                                     "incorrect":  [
+                                                       "12",
+                                                       "10",
+                                                       "8"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie viele Länder teilen eine Landgrenze mit Russland? (Ohne umstrittene Gebiete)",
+                                     "correct":  "14",
+                                     "incorrect":  [
+                                                       "12",
+                                                       "10",
+                                                       "8"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  22,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  " What is the only nation that borders both Uruguay and Venezuela?",
+                                     "correct":  "Brazil",
+                                     "incorrect":  [
+                                                       "Mexico",
+                                                       "Chile",
+                                                       "Panama"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welches ist das einzige Land, das sowohl Uruguay als auch Venezuela grenzt?",
+                                     "correct":  "Brasilien",
+                                     "incorrect":  [
+                                                       "Mexiko",
+                                                       "Chile",
+                                                       "Panama"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  22,
+                          "difficulty":  "hard",
+                          "en":  {
+                                     "q":  "Which of these cities is NOT in England?",
+                                     "correct":  "Edinburgh",
+                                     "incorrect":  [
+                                                       "Oxford",
+                                                       "Manchester",
+                                                       "Southampton"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welche dieser Städte liegt NICHT in England?",
+                                     "correct":  "Edinburgh",
+                                     "incorrect":  [
+                                                       "Oxford",
+                                                       "Manchester",
+                                                       "Southampton"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  21,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Which of these NHL teams have never moved since their inception?",
+                                     "correct":  "St. Louis Blues",
+                                     "incorrect":  [
+                                                       "New Jersey Devils",
+                                                       "Carolina Hurricanes",
+                                                       "Dallas Stars"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welches dieser NHL-Teams ist seit seiner Gründung nie umgezogen?",
+                                     "correct":  "St. Louis Blues",
+                                     "incorrect":  [
+                                                       "New Jersey Devils",
+                                                       "Carolina Hurricanes",
+                                                       "Dallas Stars"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  27,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "Which of these animals are not real?",
+                                     "correct":  "Nemean Lion",
+                                     "incorrect":  [
+                                                       "Sea Dragon",
+                                                       "Tasmanian Devil",
+                                                       "Giant Squid"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welches dieser Tiere existiert nicht?",
+                                     "correct":  "Nemäischer Löwe",
+                                     "incorrect":  [
+                                                       "Seedrache",
+                                                       "Tasmanischer Teufel",
+                                                       "Riesenkrake"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  14,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "In Game of Thrones what is the name of Jon Snow\u0027s sword?",
+                                     "correct":  "Longclaw",
+                                     "incorrect":  [
+                                                       "Oathkeeper",
+                                                       "Widow\u0027s Wail",
+                                                       "Needle"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie heißt das Schwert von Jon Schnee in Game of Thrones?",
+                                     "correct":  "Langkralle",
+                                     "incorrect":  [
+                                                       "Eidklinge",
+                                                       "Witwenschrei",
+                                                       "Nadel"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "In the game Pokémon Conquest, which warlord is able to bond with Zekrom and a shiny Rayquazza?",
+                                     "correct":  "Nobunaga",
+                                     "incorrect":  [
+                                                       "The Player",
+                                                       "Oichi",
+                                                       "Hideyoshi"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "In Pokémon Conquest – welcher Kriegsfürst kann sich mit Zekrom und einem glänzenden Rayquaza verbünden?",
+                                     "correct":  "Nobunaga",
+                                     "incorrect":  [
+                                                       "Der Spieler",
+                                                       "Oichi",
+                                                       "Hideyoshi"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  11,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "In the movie \"Cast Away\" the main protagonist\u0027s best friend while on the island is named",
+                                     "correct":  "Wilson",
+                                     "incorrect":  [
+                                                       "Carson",
+                                                       "Jackson",
+                                                       "Willy"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Im Film \"Cast Away\" – wie heißt der beste Freund des Protagonisten auf der Insel?",
+                                     "correct":  "Wilson",
+                                     "incorrect":  [
+                                                       "Carson",
+                                                       "Jackson",
+                                                       "Willy"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  30,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "What is the SI unit for resistance?",
+                                     "correct":  "Ohms",
+                                     "incorrect":  [
+                                                       "Ampheres",
+                                                       "Siemens",
+                                                       "Volts"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie lautet die SI-Einheit für elektrischen Widerstand?",
+                                     "correct":  "Ohm",
+                                     "incorrect":  [
+                                                       "Ampere",
+                                                       "Siemens",
+                                                       "Volt"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  20,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Hel was the daughter of which Norse Mythological figure?",
+                                     "correct":  "Loki",
+                                     "incorrect":  [
+                                                       "Thor",
+                                                       "Odin",
+                                                       "Balder"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Hel war die Tochter welcher nordischen Sagengestalt?",
+                                     "correct":  "Loki",
+                                     "incorrect":  [
+                                                       "Thor",
+                                                       "Odin",
+                                                       "Balder"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  22,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "What is the capital of India?",
+                                     "correct":  "New Delhi",
+                                     "incorrect":  [
+                                                       "Beijing",
+                                                       "Montreal",
+                                                       "Tithi"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie heißt die Hauptstadt von Indien?",
+                                     "correct":  "Neu-Delhi",
+                                     "incorrect":  [
+                                                       "Peking",
+                                                       "Montreal",
+                                                       "Tithi"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "In \"Mario \u0026 Sonic at the Olympic Games\", characters are split into how many types?",
+                                     "correct":  "4",
+                                     "incorrect":  [
+                                                       "6",
+                                                       "5",
+                                                       "3"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "In \"Mario \u0026 Sonic at the Olympic Games\" – in wie viele Typen werden die Charaktere eingeteilt?",
+                                     "correct":  "4",
+                                     "incorrect":  [
+                                                       "6",
+                                                       "5",
+                                                       "3"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  28,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "What was the aircraft registration for the last Concorde built?",
+                                     "correct":  "G-BOAF",
+                                     "incorrect":  [
+                                                       "F-BTSC",
+                                                       "G-BOAC",
+                                                       "F-BVFF"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie lautete das Luftfahrzeugkennzeichen der letzten gebauten Concorde?",
+                                     "correct":  "G-BOAF",
+                                     "incorrect":  [
+                                                       "F-BTSC",
+                                                       "G-BOAC",
+                                                       "F-BVFF"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  11,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "What is the birth name of Michael Caine?",
+                                     "correct":  "Maurice Micklewhite",
+                                     "incorrect":  [
+                                                       "Morris Coleman",
+                                                       "Carl Myers",
+                                                       "Martin Michaels"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie lautet der richtige Name von Michael Caine?",
+                                     "correct":  "Maurice Micklewhite",
+                                     "incorrect":  [
+                                                       "Morris Coleman",
+                                                       "Carl Myers",
+                                                       "Martin Michaels"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  10,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Who is the protagonist of the book: \"The Catcher in the Rye\" by J.D. Salinger",
+                                     "correct":  "Holden Caulfield",
+                                     "incorrect":  [
+                                                       "Holden David",
+                                                       "Jerome Caulfield",
+                                                       "Jerome David"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wer ist der Protagonist des Romans \"Der Fänger im Roggen\" von J.D. Salinger?",
+                                     "correct":  "Holden Caulfield",
+                                     "incorrect":  [
+                                                       "Holden David",
+                                                       "Jerome Caulfield",
+                                                       "Jerome David"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  9,
+                          "difficulty":  "hard",
+                          "en":  {
+                                     "q":  "Sciophobia is the fear of what?",
+                                     "correct":  "Shadows",
+                                     "incorrect":  [
+                                                       "Eating",
+                                                       "Bright lights",
+                                                       "Transportation"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Sciophobia ist die Angst vor was?",
+                                     "correct":  "Schatten",
+                                     "incorrect":  [
+                                                       "Essen",
+                                                       "Hellem Licht",
+                                                       "Fortbewegungsmitteln"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Which of these Counter-Strike maps is a bomb defuse scenario?",
+                                     "correct":  "Prodigy",
+                                     "incorrect":  [
+                                                       "747",
+                                                       "Havana",
+                                                       "Oilrig"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welche dieser Counter-Strike-Maps ist ein Bombenentschärfungs-Szenario?",
+                                     "correct":  "Prodigy",
+                                     "incorrect":  [
+                                                       "747",
+                                                       "Havana",
+                                                       "Oilrig"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  31,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "What is the name of the main character of the anime \"One-Punch Man\"?",
+                                     "correct":  "Saitama",
+                                     "incorrect":  [
+                                                       "Genos",
+                                                       "Sonic",
+                                                       "King"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie heißt die Hauptfigur des Anime \"One-Punch Man\"?",
+                                     "correct":  "Saitama",
+                                     "incorrect":  [
+                                                       "Genos",
+                                                       "Sonic",
+                                                       "King"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "How many unique items does \"Borderlands 2\" claim to have?",
+                                     "correct":  "87 Bazillion ",
+                                     "incorrect":  [
+                                                       "87 Million",
+                                                       "87 Trillion",
+                                                       "87 Gazillion "
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie viele unterschiedliche Items behauptet \"Borderlands 2\" zu haben?",
+                                     "correct":  "87 Bazillionen",
+                                     "incorrect":  [
+                                                       "87 Millionen",
+                                                       "87 Billionen",
+                                                       "87 Gazillionen"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "In Fallout 4, which type of power armor is first encountered in the early mission \"When Freedom Calls\" in a crashed Vertibird?",
+                                     "correct":  "T-45",
+                                     "incorrect":  [
+                                                       "T-51",
+                                                       "T-60",
+                                                       "X-01"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "In Fallout 4, welcher Typ von Kraftrüstung wird erstmals in der frühen Mission \"When Freedom Calls\" in einem abgestürzten Vertibird gefunden?",
+                                     "correct":  "T-45",
+                                     "incorrect":  [
+                                                       "T-51",
+                                                       "T-60",
+                                                       "X-01"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "In \"PUBATTLEGROUNDS\" what is the name of the Military Base island?",
+                                     "correct":  "Sosnovka",
+                                     "incorrect":  [
+                                                       "Novorepnoye",
+                                                       "Mylta",
+                                                       "Yasnaya"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie heißt die Militärbasis-Insel in \"PUBG: Battlegrounds\"?",
+                                     "correct":  "Sosnovka",
+                                     "incorrect":  [
+                                                       "Novorepnoye",
+                                                       "Mylta",
+                                                       "Yasnaya"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  25,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "Who painted The Starry Night?",
+                                     "correct":  "Vincent van Gogh",
+                                     "incorrect":  [
+                                                       "Pablo Picasso",
+                                                       "Leonardo da Vinci",
+                                                       "Michelangelo"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wer malte Die Sternennacht?",
+                                     "correct":  "Vincent van Gogh",
+                                     "incorrect":  [
+                                                       "Pablo Picasso",
+                                                       "Leonardo da Vinci",
+                                                       "Michelangelo"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Who was the first female protagonist in a video game?",
+                                     "correct":  "Samus Aran",
+                                     "incorrect":  [
+                                                       "Lara Croft",
+                                                       "Alis Landale",
+                                                       "Chell"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wer war die erste weibliche Protagonistin in einem Videospiel?",
+                                     "correct":  "Samus Aran",
+                                     "incorrect":  [
+                                                       "Lara Croft",
+                                                       "Alis Landale",
+                                                       "Chell"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  22,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "How many countries does the United States share a land border with?",
+                                     "correct":  "2",
+                                     "incorrect":  [
+                                                       "1",
+                                                       "3",
+                                                       "4"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Mit wie vielen Ländern teilt die Vereinigten Staaten eine Landgrenze?",
+                                     "correct":  "2",
+                                     "incorrect":  [
+                                                       "1",
+                                                       "3",
+                                                       "4"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  12,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "What 1970\u0027s American ballad referred to the 1959 plane crash as the \"the day the music died\"?",
+                                     "correct":  "American Pie",
+                                     "incorrect":  [
+                                                       "Kentucky Rain",
+                                                       "I Will Always Love You",
+                                                       "Rock \u0027n\u0027 Roll Suicide"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welche amerikanische Ballade aus den 1970er Jahren bezog sich auf den Flugzeugabsturz von 1959 als \"the day the music died\"?",
+                                     "correct":  "American Pie",
+                                     "incorrect":  [
+                                                       "Kentucky Rain",
+                                                       "I Will Always Love You",
+                                                       "Rock \u0027n\u0027 Roll Suicide"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  12,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Which song is not by TheFatRat?",
+                                     "correct":  "Ascent",
+                                     "incorrect":  [
+                                                       "Monody",
+                                                       "Windfall",
+                                                       "Infinite Power!"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welcher Song ist nicht von TheFatRat?",
+                                     "correct":  "Ascent",
+                                     "incorrect":  [
+                                                       "Monody",
+                                                       "Windfall",
+                                                       "Infinite Power!"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  14,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "In Game of Thrones, what continent lies across the Narrow Sea from Westeros?",
+                                     "correct":  "Essos",
+                                     "incorrect":  [
+                                                       "Easteros",
+                                                       "Westereast",
+                                                       "Esuntos"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "In Game of Thrones, welcher Kontinent liegt jenseits der Engen Meerenge gegenüber von Westeros?",
+                                     "correct":  "Essos",
+                                     "incorrect":  [
+                                                       "Easteros",
+                                                       "Westereast",
+                                                       "Esuntos"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  12,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Who is the primary lyricist for Canadian progressive rock band Rush?",
+                                     "correct":  "Neil Peart",
+                                     "incorrect":  [
+                                                       "Geddy Lee",
+                                                       "Alex Lifeson",
+                                                       "John Rutsey"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wer ist der primäre Texter der kanadischen Prog-Rock-Band Rush?",
+                                     "correct":  "Neil Peart",
+                                     "incorrect":  [
+                                                       "Geddy Lee",
+                                                       "Alex Lifeson",
+                                                       "John Rutsey"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  32,
+                          "difficulty":  "medium",
+                          "en":  {
+                                     "q":  "Who is the \"dumb blonde\" character in Nickelodeon\u0027s \"The Loud House\"?",
+                                     "correct":  "Leni",
+                                     "incorrect":  [
+                                                       "Luan",
+                                                       "Luna",
+                                                       "Lincoln"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welche ist die \"dumme Blonde\" in Nickelodeons \"The Loud House\"?",
+                                     "correct":  "Leni",
+                                     "incorrect":  [
+                                                       "Luan",
+                                                       "Luna",
+                                                       "Lincoln"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  22,
+                          "difficulty":  "hard",
+                          "en":  {
+                                     "q":  "How many stations does the Central Line have on the London Underground?",
+                                     "correct":  "49",
+                                     "incorrect":  [
+                                                       "51",
+                                                       "43",
+                                                       "47"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie viele Stationen hat die Central Line in der Londoner U-Bahn?",
+                                     "correct":  "49",
+                                     "incorrect":  [
+                                                       "51",
+                                                       "43",
+                                                       "47"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  22,
+                          "difficulty":  "hard",
+                          "en":  {
+                                     "q":  "What is the largest freshwater lake by volume?",
+                                     "correct":  "Lake Baikal",
+                                     "incorrect":  [
+                                                       "Lake Superior",
+                                                       "Lake Huron",
+                                                       "Lake Michigan"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welcher ist der größte Süßwassersee nach Volumen?",
+                                     "correct":  "Baikalsee",
+                                     "incorrect":  [
+                                                       "Oberer See",
+                                                       "Huronsee",
+                                                       "Michigansee"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  13,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "Who wrote the award winning musical \"In The Heights\"?",
+                                     "correct":  "Lin-Manuel Miranda",
+                                     "incorrect":  [
+                                                       "Steven Sondheim",
+                                                       "Francis Scott Key",
+                                                       "John Phillips Sousa"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wer schrieb das preisgekrönte Musical \"In The Heights\"?",
+                                     "correct":  "Lin-Manuel Miranda",
+                                     "incorrect":  [
+                                                       "Steven Sondheim",
+                                                       "Francis Scott Key",
+                                                       "John Philip Sousa"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  25,
+                          "difficulty":  "hard",
+                          "en":  {
+                                     "q":  "Painter Piet Mondrian (1872 - 1944) was a part of what movement?",
+                                     "correct":  "Neoplasticism",
+                                     "incorrect":  [
+                                                       "Precisionism",
+                                                       "Cubism",
+                                                       "Impressionism"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Maler Piet Mondrian (1872 - 1944) war Teil welcher Kunstbewegung?",
+                                     "correct":  "Neoplastizismus",
+                                     "incorrect":  [
+                                                       "Präzisionismus",
+                                                       "Kubismus",
+                                                       "Impressionismus"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  23,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "Which of the following was Brazil was a former colony under?",
+                                     "correct":  "Portugal",
+                                     "incorrect":  [
+                                                       "Spain",
+                                                       "The Netherlands",
+                                                       "France"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Unter welcher ehemaligen Kolonialmacht war Brasilien eine Kolonie?",
+                                     "correct":  "Portugal",
+                                     "incorrect":  [
+                                                       "Spanien",
+                                                       "Die Niederlande",
+                                                       "Frankreich"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  31,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "What was Ash Ketchum\u0027s second Pokemon?",
+                                     "correct":  "Caterpie",
+                                     "incorrect":  [
+                                                       "Charmander",
+                                                       "Pikachu",
+                                                       "Pidgey"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Welches war Ashs zweites Pokémon?",
+                                     "correct":  "Raupy",
+                                     "incorrect":  [
+                                                       "Glumanda",
+                                                       "Pikachu",
+                                                       "Pidgeot"
+                                                   ]
+                                 }
+                      },
+                      {
+                          "category":  15,
+                          "difficulty":  "easy",
+                          "en":  {
+                                     "q":  "What is the name of the game developer who created \"Call Of Duty: Zombies\"?",
+                                     "correct":  "Treyarch",
+                                     "incorrect":  [
+                                                       "Sledgehammer Games",
+                                                       "Infinity Ward",
+                                                       "Naughty Dog"
+                                                   ]
+                                 },
+                          "de":  {
+                                     "q":  "Wie heißt das Spielentwickler-Unternehmen, das \"Call of Duty: Zombies\" entwickelt hat?",
+                                     "correct":  "Treyarch",
+                                     "incorrect":  [
+                                                       "Sledgehammer Games",
+                                                       "Infinity Ward",
+                                                       "Naughty Dog"
+                                                   ]
+                                 }
+                      }
+                  ]
 }

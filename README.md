@@ -82,6 +82,10 @@ python -m http.server 8080
 
 ---
 
+## 🌐 Übersetzung
+
+Fragen werden automatisch über die kostenlose [MyMemory API](https://mymemory.translated.net/) ins Deutsche übersetzt — kein eigener Server nötig, funktioniert sofort. Wer stattdessen einen eigenen LibreTranslate-Server nutzen möchte (z. B. für bessere Qualität oder höhere Limits), kann dessen URL optional im Header eintragen; siehe `LIBRETRANSLATE_SETUP.md`.
+
 ## 📝 Hinweise
 
 - Die App läuft vollständig **client-seitig** – kein Backend, kein Server nötig.

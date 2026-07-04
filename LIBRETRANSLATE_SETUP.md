@@ -1,4 +1,6 @@
-# LibreTranslate auf Render.com deployen
+# LibreTranslate auf Render.com deployen (optional)
+
+> **Hinweis:** Die App übersetzt Fragen standardmäßig automatisch über die kostenlose MyMemory-API — ohne eigenen Server. Diese Anleitung ist nur für alle, die stattdessen einen eigenen LibreTranslate-Server betreiben möchten (z. B. für höhere Limits oder bessere Übersetzungsqualität). Der Render.com-Free-Tier hat allerdings nur 512 MB RAM und stürzt bei LibreTranslate häufig ab — für ernsthaften Dauerbetrieb eher Hugging Face Spaces (16 GB RAM, Docker) in Betracht ziehen.
 
 So bekommt das Pub-Quiz deutsche Fragen — einmalig ~10 Minuten Aufwand, danach kostenlos.
 

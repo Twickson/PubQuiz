@@ -41,7 +41,7 @@
     <nav style="display:flex; gap:10px; align-items:center;">
       <div style="display:flex; flex-direction:column; gap:4px; margin-right:6px; padding:6px 12px; border-radius:9px; background:rgba(255,255,255,.05); border:1px solid #4a3a20; min-width:180px;">
         <span style="font-family:'Caveat',cursive; font-size:15px; color:{{ ltStatusColor }};">{{ ltStatus }}</span>
-        <input value="{{ libreTranslateUrl }}" onChange="{{ onLibreUrl }}" placeholder="https://deine-instanz.onrender.com" style="font-size:12px; font-family:'Lora',serif; padding:4px 8px; border-radius:5px; border:1px solid #5a4520; background:#1a120b; color:#d4b97a; width:100%;" />
+        <input value="{{ libreTranslateUrl }}" onChange="{{ onLibreUrl }}" placeholder="Optional: eigener LibreTranslate-Server" style="font-size:12px; font-family:'Lora',serif; padding:4px 8px; border-radius:5px; border:1px solid #5a4520; background:#1a120b; color:#d4b97a; width:100%;" />
       </div>
       <sc-for list="{{ nav }}" as="item" hint-placeholder-count="3">
         <button onClick="{{ item.onClick }}" style="font-family:'Lora',serif; font-weight:700; font-size:15px; cursor:pointer; padding:10px 20px; border-radius:8px; border:1px solid #6e521a; background:{{ item.bg }}; color:{{ item.fg }}; box-shadow:{{ item.shadow }};">{{ item.label }}</button>
@@ -590,9 +590,7 @@ class Component extends DCLogic {
     try { localStorage.setItem('pubquiz_lt_url', v.trim()); } catch (e) {}
   }
 
-  async translateWithLibre(texts) {
-    const base = (this.state.libreTranslateUrl || '').replace(/\/$/, '');
-    if (!base) return null; // kein Server konfiguriert → Fallback Englisch
+  async translateWithLibre(texts, base) {
     const results = [];
     for (const text of texts) {
       const res = await fetch(base + '/translate', {
@@ -605,6 +603,22 @@ class Component extends DCLogic {
       results.push(data.translatedText || text);
     }
     return results;
+  }
+
+  async translateWithMyMemory(texts) {
+    return Promise.all(texts.map(async (text) => {
+      const url = 'https://api.mymemory.translated.net/get?' + new URLSearchParams({ q: text, langpair: 'en|de' });
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('MyMemory HTTP ' + res.status);
+      const data = await res.json();
+      if (data.responseStatus && data.responseStatus !== 200) throw new Error('MyMemory Fehler ' + data.responseStatus);
+      return data.responseData?.translatedText || text;
+    }));
+  }
+
+  async translateTexts(texts) {
+    const customBase = (this.state.libreTranslateUrl || '').replace(/\/$/, '');
+    return customBase ? this.translateWithLibre(texts, customBase) : this.translateWithMyMemory(texts);
   }
 
   async loadQuestions() {
@@ -639,7 +653,7 @@ class Component extends DCLogic {
       raw.forEach(r => { allTexts.push(r.q); allTexts.push(r.correct); r.incs.forEach(x => allTexts.push(x)); });
 
       let translated = null;
-      try { translated = await this.translateWithLibre(allTexts); } catch (e) { /* Fallback: Englisch */ }
+      try { translated = await this.translateTexts(allTexts); } catch (e) { /* Fallback: Englisch */ }
 
       let idx = 0;
       const qs = raw.map(r => {
@@ -661,7 +675,7 @@ class Component extends DCLogic {
           questions: Object.assign({}, st.questions, { [rid]: qsFallback }),
           qIndex: Object.assign({}, st.qIndex, { [rid]: 0 }),
           revealed: this._clearRevealed(st.revealed, rid),
-          apiError: this.state.libreTranslateUrl ? 'Übersetzung fehlgeschlagen — Fragen auf Englisch geladen.' : 'Kein LibreTranslate-Server konfiguriert — Fragen auf Englisch.',
+          apiError: 'Übersetzung fehlgeschlagen — Fragen auf Englisch geladen.',
         }));
         return;
       }
@@ -893,8 +907,8 @@ class Component extends DCLogic {
       // LibreTranslate Server
       libreTranslateUrl: s.libreTranslateUrl || '',
       ltUrlSet: !!(s.libreTranslateUrl && s.libreTranslateUrl.length > 5),
-      ltStatus: (s.libreTranslateUrl && s.libreTranslateUrl.length > 5) ? '🌐 Übersetzung aktiv' : '⚠ Kein Übersetzungsserver',
-      ltStatusColor: (s.libreTranslateUrl && s.libreTranslateUrl.length > 5) ? '#7fe0a8' : '#e6c869',
+      ltStatus: (s.libreTranslateUrl && s.libreTranslateUrl.length > 5) ? '🌐 Eigener Server aktiv' : '🌐 MyMemory (automatisch)',
+      ltStatusColor: '#7fe0a8',
       onLibreUrl: (e) => this.setLibreUrl(e.target.value),
 
     };

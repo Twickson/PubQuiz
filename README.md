@@ -6,8 +6,12 @@ Eine vollständige Pub-Quiz-App für den Spielleiter: Teams verwalten, Runden st
 
 ```
 pub-quiz/
-├── index.html                        ← Haupt-App (umbenannt von Pub_Quiz_dc.html)
+├── index.html                        ← Haupt-App / Spielleiter-Pult (umbenannt von Pub_Quiz_dc.html)
+├── play.html                         ← Mitspieler-Seite fürs Smartphone (Live-Voting)
 ├── support.js                        ← dc-Runtime (React-basiertes Template-System)
+├── firebase-config.js                ← Deine Firebase-Projekt-Zugangsdaten (siehe unten)
+├── firebase-live.js                  ← Live-Voting-Logik (Session, Auth, Votes) — von index.html & play.html genutzt
+├── database.rules.json               ← Security Rules für die Firebase Realtime Database
 ├── data/questions.json               ← Fragen-Datenbank (EN+DE), wächst mit der Zeit
 ├── scripts/build-question-db.ps1     ← Lädt neue Fragen & übersetzt sie via Claude
 └── README.md                         ← Diese Datei
@@ -28,14 +32,14 @@ pub-quiz/
 
 **Option A – Web-Upload (kein Git nötig):**
 1. Im neuen Repo auf **"uploading an existing file"** klicken
-2. `index.html` und `support.js` hineinziehen
+2. Alle Dateien aus der Dateistruktur oben hineinziehen
 3. **Commit changes**
 
 **Option B – Git (empfohlen für spätere Updates):**
 ```bash
 git clone https://github.com/DEIN-USERNAME/pub-quiz.git
 cd pub-quiz
-# index.html und support.js in diesen Ordner kopieren
+# Alle Projektdateien in diesen Ordner kopieren
 git add .
 git commit -m "Initial upload: Pub Quiz App"
 git push
@@ -109,8 +113,36 @@ git push
 
 Falls die App bei "Fragen laden" meldet, dass nicht genug Fragen für die gewählte Kategorie/Schwierigkeit vorhanden sind: Skript mit höherem `-Amount` erneut ausführen oder andere Filter wählen.
 
+## 📱 Live-Voting per Smartphone (optional)
+
+Zuschauer können mit ihrem eigenen Handy per Session-Code beitreten und live pro Frage abstimmen — ganz ohne Account. Die Ergebnisse erscheinen in Echtzeit im Spielleiter-Pult. Das Feature ist **optional**: Ohne Einrichtung läuft die App wie gewohnt, nur der "Live-Voting starten"-Button meldet dann, dass es nicht konfiguriert ist.
+
+### Einmaliges Setup
+
+1. Gehe zu [console.firebase.google.com](https://console.firebase.google.com) → **Neues Projekt erstellen** (kostenlos, kein Kreditkarteneintrag nötig)
+2. Im Projekt: **Build → Realtime Database** → **Datenbank erstellen** (Standort egal, z. B. Europe)
+3. Im Reiter **Regeln** der Realtime Database: Inhalt von `database.rules.json` einfügen und **Veröffentlichen**
+4. **Build → Authentication** → **Los geht's** → Anbieter **Anonym** aktivieren
+5. Projekteinstellungen (Zahnrad oben links) → ganz unten **"</> Web-App hinzufügen"** → Name vergeben → die angezeigten Config-Werte kopieren
+6. Diese Werte in `firebase-config.js` eintragen (die Datei liegt im Repo-Root)
+7. Committen & pushen — fertig
+
+**Wichtig:** Die Werte in `firebase-config.js` sind kein Geheimnis wie ein API-Key sonst — Firebase-Web-Configs dürfen öffentlich im Client-Code stehen. Der eigentliche Zugriffsschutz läuft über die Security Rules (`database.rules.json`), nicht über Geheimhaltung dieser Datei.
+
+### Benutzung
+
+- Im Spielleiter-Pult (Spielansicht) auf **"Live-Voting starten"** klicken → ein 4-stelliger Code erscheint
+- Mitspieler öffnen `play.html` (z. B. `https://DEIN-USERNAME.github.io/pub-quiz/play.html`) auf ihrem Handy, geben den Code ein und treten bei
+- Jede Frage, die der Spielleiter zeigt, erscheint automatisch auf allen Handys; Stimmen werden live im Pult als Balken neben den Antworten angezeigt
+- Bricht die Verbindung ab (Handy sperrt, Netz weg), reicht es, `play.html` erneut zu öffnen — der Code wird automatisch vorausgefüllt und das Gerät meldet sich beim selben Session-Eintrag an, ganz ohne erneutes Eintippen des Namens
+- **"Beenden"** im Pult schließt die Session; auf den Handys erscheint dann ein Hinweis, dass die Session vorbei ist
+
+### Kosten & Grenzen
+
+Der Firebase-Free-Tier (Spark-Plan) deckt das für ein Pub-Quiz mit ein paar Dutzend Handys pro Abend bequem ab — dauerhaft kostenlos. Alte Sessions werden nicht automatisch gelöscht (die Datenmenge ist aber winzig, das fällt praktisch nicht ins Gewicht).
+
 ## 📝 Hinweise
 
-- Die App läuft vollständig **client-seitig** – kein Backend, kein Server nötig.
+- Die App läuft vollständig **client-seitig** – kein eigener Server nötig (Live-Voting nutzt Firebase als Backend-as-a-Service).
 - `support.js` ist die generierte dc-Runtime und sollte nicht manuell bearbeitet werden.
 - Alle Änderungen an der App erfolgen in `index.html`.

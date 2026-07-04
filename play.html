@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pub Quiz — Mitspielen</title>
+<script src="./firebase-config.js"></script>
+<script type="module" src="./firebase-live.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Caveat:wght@600;700&family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100vh; }
+  body {
+    font-family: 'Lora', serif;
+    background: linear-gradient(180deg, #26190f, #16100a);
+    color: #e7eee2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 40px;
+  }
+  h1 {
+    font-family: 'Alfa Slab One', serif;
+    font-weight: 400;
+    font-size: 26px;
+    color: #f1e3bf;
+    text-shadow: 0 2px 0 #1c120a;
+    margin: 0 0 4px;
+    text-align: center;
+  }
+  .sub { font-family: 'Caveat', cursive; font-size: 18px; color: #c9a13e; margin-bottom: 26px; text-align: center; }
+  .card {
+    width: 100%; max-width: 420px;
+    background: linear-gradient(135deg,#f1e6c8,#e6d6ae);
+    border: 1px solid #b89b63; border-radius: 14px;
+    box-shadow: 0 16px 34px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.55);
+    padding: 22px; color: #241c12;
+  }
+  input {
+    width: 100%; padding: 13px 14px; font-size: 20px; text-align: center;
+    letter-spacing: 3px; text-transform: uppercase;
+    border-radius: 8px; border: 1px solid #b89b63; background: #fff8e6; color: #241c12;
+    font-family: 'Alfa Slab One', serif; margin-bottom: 12px;
+  }
+  input#nameInput { font-family: 'Lora', serif; text-transform: none; letter-spacing: normal; font-size: 16px; font-weight: 600; }
+  button {
+    width: 100%; cursor: pointer; font-family: 'Lora', serif; font-weight: 700; font-size: 16px;
+    padding: 13px; border-radius: 9px; border: 1px solid #6e521a;
+    background: linear-gradient(180deg,#e6c869,#c9a13e 55%,#a9842c); color: #2a1d07;
+    box-shadow: 0 4px 0 #6e521a, inset 0 1px 0 rgba(255,255,255,.6);
+  }
+  button:disabled { opacity: .6; cursor: default; }
+  .error { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: rgba(180,70,60,.16); border: 1px solid rgba(220,120,100,.5); color: #7a3b2b; font-size: 14px; text-align: center; }
+  .hint { font-family: 'Caveat', cursive; font-size: 16px; color: #8a7140; text-align: center; margin-top: 10px; }
+
+  .quiz-card {
+    width: 100%; max-width: 460px;
+    background: radial-gradient(130% 130% at 50% 0%, #28342a 0%, #131b15 74%);
+    border: 8px solid #2a1c11; border-radius: 12px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.5), inset 0 0 60px rgba(0,0,0,.55);
+    padding: 22px 20px 26px;
+  }
+  .qtext { font-size: 20px; font-weight: 600; color: #f6efd9; line-height: 1.35; margin-bottom: 18px; min-height: 50px; }
+  .option {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px; margin-bottom: 10px;
+    border-radius: 9px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+    cursor: pointer; transition: background .2s ease, border-color .2s ease; position: relative; overflow: hidden;
+  }
+  .option:active { background: rgba(255,255,255,.12); }
+  .option.chosen { border-color: #e6c869; background: rgba(230,200,105,.18); }
+  .option.correct { border-color: #7fe0a8; background: rgba(70,153,106,.28); }
+  .option.wrong { opacity: .5; }
+  .option.disabled { cursor: default; }
+  .letter {
+    width: 28px; height: 28px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Alfa Slab One', serif; font-size: 12px; color: #241c12; background: rgba(230,200,105,.85);
+  }
+  .opt-text { flex: 1; font-size: 16px; color: #edf2e7; }
+  .status { font-family: 'Caveat', cursive; font-size: 20px; color: #9fb39a; text-align: center; margin-top: 16px; }
+  .waiting-icon { text-align: center; font-size: 40px; margin-bottom: 10px; }
+  #screens > div { display: none; }
+  #screens > div.active { display: block; }
+</style>
+</head>
+<body>
+
+  <h1>🍺 Pub Quiz</h1>
+  <div class="sub">Mitspielen per Handy</div>
+
+  <div id="screens">
+
+    <div id="joinScreen">
+      <div class="card">
+        <input id="codeInput" placeholder="CODE" maxlength="6" inputmode="text" autocapitalize="characters" />
+        <input id="nameInput" placeholder="Dein Name (optional)" maxlength="24" />
+        <button id="joinBtn">Beitreten</button>
+        <div id="joinError" class="error" style="display:none;"></div>
+        <div class="hint">Den Code bekommst du vom Spielleiter</div>
+      </div>
+    </div>
+
+    <div id="waitingScreen">
+      <div class="quiz-card">
+        <div class="waiting-icon">⏳</div>
+        <div class="status" id="waitingText">Warte auf die nächste Frage …</div>
+      </div>
+    </div>
+
+    <div id="questionScreen">
+      <div class="quiz-card">
+        <div class="qtext" id="qText"></div>
+        <div id="optionsList"></div>
+        <div class="status" id="questionStatus" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div id="endedScreen">
+      <div class="card" style="text-align:center;">
+        <div style="font-family:'Caveat',cursive; font-size:22px;">Diese Session wurde beendet.</div>
+        <button id="rejoinBtn" style="margin-top:14px;">Neu beitreten</button>
+      </div>
+    </div>
+
+  </div>
+
+<script type="module">
+  // Wartet, bis firebase-live.js (ebenfalls ein Modul) seine window.fb*-Funktionen
+  // registriert hat. Beide Module werden vom Browser vor DOMContentLoaded
+  // ausgeführt, ein kurzes Polling fängt trotzdem jede Restunsicherheit ab.
+  function waitForFirebase() {
+    return new Promise((resolve) => {
+      (function check() {
+        if (window.fbJoinSession) resolve();
+        else setTimeout(check, 30);
+      })();
+    });
+  }
+
+  const screens = {
+    join: document.getElementById('joinScreen'),
+    waiting: document.getElementById('waitingScreen'),
+    question: document.getElementById('questionScreen'),
+    ended: document.getElementById('endedScreen'),
+  };
+  function showScreen(name) {
+    Object.values(screens).forEach(el => el.classList.remove('active'));
+    screens[name].classList.add('active');
+  }
+
+  const codeInput = document.getElementById('codeInput');
+  const nameInput = document.getElementById('nameInput');
+  const joinBtn = document.getElementById('joinBtn');
+  const joinError = document.getElementById('joinError');
+  const rejoinBtn = document.getElementById('rejoinBtn');
+  const qText = document.getElementById('qText');
+  const optionsList = document.getElementById('optionsList');
+  const questionStatus = document.getElementById('questionStatus');
+  const waitingText = document.getElementById('waitingText');
+
+  const STORE_KEY = 'pubquiz_play_session';
+  let currentCode = null;
+  let unsubscribeSession = null;
+  let votedQuestionId = null;
+
+  function loadCached() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); } catch (e) { return null; }
+  }
+  function saveCached(code, name) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({ code, name })); } catch (e) {}
+  }
+  function clearCached() {
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+  }
+
+  function setJoinError(msg) {
+    joinError.textContent = msg;
+    joinError.style.display = msg ? 'block' : 'none';
+  }
+
+  async function attachSession(code) {
+    if (unsubscribeSession) { unsubscribeSession(); unsubscribeSession = null; }
+    currentCode = code;
+    unsubscribeSession = window.fbListenSession(code, (session) => {
+      if (!session || session.status === 'ended') {
+        showScreen('ended');
+        return;
+      }
+      renderQuestion(session.currentQuestion, session.status === 'revealed');
+    });
+  }
+
+  function renderQuestion(q, revealed) {
+    if (!q) {
+      waitingText.textContent = 'Warte auf die nächste Frage …';
+      showScreen('waiting');
+      return;
+    }
+    const alreadyVoted = votedQuestionId === q.id;
+    optionsList.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const div = document.createElement('div');
+      div.className = 'option';
+      const letter = document.createElement('div');
+      letter.className = 'letter';
+      letter.textContent = String.fromCharCode(65 + i);
+      const text = document.createElement('div');
+      text.className = 'opt-text';
+      text.textContent = opt;
+      div.appendChild(letter);
+      div.appendChild(text);
+
+      if (revealed) {
+        div.classList.add('disabled');
+        if (i === q.correctIndex) div.classList.add('correct');
+        else div.classList.add('wrong');
+      } else if (alreadyVoted) {
+        div.classList.add('disabled');
+      } else {
+        div.addEventListener('click', () => submitVote(q.id, i, div));
+      }
+      optionsList.appendChild(div);
+    });
+
+    questionStatus.style.display = 'block';
+    if (revealed) {
+      questionStatus.textContent = 'Auflösung — richtige Antwort ist markiert';
+    } else if (alreadyVoted) {
+      questionStatus.textContent = 'Stimme gesendet — warte auf die Auflösung …';
+    } else {
+      questionStatus.textContent = 'Wähle eine Antwort';
+    }
+    qText.textContent = q.text;
+    showScreen('question');
+  }
+
+  async function submitVote(questionId, optionIndex, el) {
+    document.querySelectorAll('.option').forEach(o => o.classList.add('disabled'));
+    el.classList.add('chosen');
+    try {
+      await window.fbSubmitVote(currentCode, questionId, optionIndex);
+      votedQuestionId = questionId;
+      questionStatus.textContent = 'Stimme gesendet — warte auf die Auflösung …';
+    } catch (e) {
+      questionStatus.textContent = 'Fehler beim Abstimmen: ' + e.message;
+    }
+  }
+
+  async function join(code, name, { silent } = {}) {
+    if (!window.fbIsConfigured || !window.fbIsConfigured()) {
+      setJoinError('Live-Voting ist auf dieser Seite nicht konfiguriert.');
+      return false;
+    }
+    try {
+      if (!silent) { joinBtn.disabled = true; joinBtn.textContent = 'Beitreten…'; }
+      await window.fbJoinSession(code, name);
+      saveCached(code, name);
+      votedQuestionId = null;
+      await attachSession(code);
+      return true;
+    } catch (e) {
+      if (!silent) setJoinError(e.message);
+      return false;
+    } finally {
+      joinBtn.disabled = false; joinBtn.textContent = 'Beitreten';
+    }
+  }
+
+  joinBtn.addEventListener('click', async () => {
+    const code = (codeInput.value || '').trim().toUpperCase();
+    const name = (nameInput.value || '').trim();
+    setJoinError('');
+    if (!code) { setJoinError('Bitte Session-Code eingeben.'); return; }
+    await join(code, name);
+  });
+  codeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') joinBtn.click(); });
+  nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') joinBtn.click(); });
+
+  rejoinBtn.addEventListener('click', () => {
+    clearCached();
+    showScreen('join');
+  });
+
+  async function init() {
+    await waitForFirebase();
+    const cached = loadCached();
+    if (cached && cached.code) {
+      codeInput.value = cached.code;
+      nameInput.value = cached.name || '';
+      // Automatischer Reconnect: gleiche uid (Firebase Anonymous Auth persistiert
+      // sie im Browser) landet wieder im selben Spieler-Eintrag der Session.
+      const ok = await join(cached.code, cached.name, { silent: true });
+      if (!ok) showScreen('join');
+    } else {
+      showScreen('join');
+    }
+  }
+  init();
+</script>
+</body>
+</html>

@@ -6,9 +6,11 @@ Eine vollständige Pub-Quiz-App für den Spielleiter: Teams verwalten, Runden st
 
 ```
 pub-quiz/
-├── index.html      ← Haupt-App (umbenannt von Pub_Quiz_dc.html)
-├── support.js      ← dc-Runtime (React-basiertes Template-System)
-└── README.md       ← Diese Datei
+├── index.html                        ← Haupt-App (umbenannt von Pub_Quiz_dc.html)
+├── support.js                        ← dc-Runtime (React-basiertes Template-System)
+├── data/questions.json               ← Fragen-Datenbank (EN+DE), wächst mit der Zeit
+├── scripts/build-question-db.ps1     ← Lädt neue Fragen & übersetzt sie via Claude
+└── README.md                         ← Diese Datei
 ```
 
 ---
@@ -82,9 +84,30 @@ python -m http.server 8080
 
 ---
 
-## 🌐 Übersetzung
+## 🌐 Fragen-Datenbank & Übersetzung
 
-Fragen werden automatisch über die kostenlose [MyMemory API](https://mymemory.translated.net/) ins Deutsche übersetzt — kein eigener Server nötig, funktioniert sofort.
+Die App lädt Fragen **nicht mehr live** aus dem Internet, sondern aus der lokalen, vorab übersetzten Datenbank `data/questions.json`. Das ergibt deutlich bessere Übersetzungsqualität als eine Live-Maschinenübersetzung und lässt dich genau steuern, wie viele Fragen (= wie viele Tokens) pro Durchlauf übersetzt werden.
+
+### Neue Fragen hinzufügen
+
+Das Skript `scripts/build-question-db.ps1` lädt neue Fragen von [Open Trivia DB](https://opentdb.com) (aus allen Kategorien gemischt), übersetzt sie mit **Claude Haiku 4.5** ins Deutsche und hängt sie an `data/questions.json` an. Bereits vorhandene Fragen werden nie erneut übersetzt — die Datenbank wächst nur.
+
+```powershell
+# Einmalig: eigenen Anthropic API-Key setzen (nur für die aktuelle PowerShell-Sitzung)
+$env:ANTHROPIC_API_KEY = "sk-ant-..."
+
+# 20 neue Fragen laden und übersetzen (Standard: 20)
+.\scripts\build-question-db.ps1 -Amount 20
+
+# Danach committen & pushen, damit die Website die neuen Fragen bekommt:
+git add data/questions.json
+git commit -m "Neue Fragen hinzugefügt"
+git push
+```
+
+`-Amount` steuert direkt, wie viele neue Fragen (und damit wie viele Claude-Tokens) pro Lauf verbraucht werden — bei ~30 Wörtern pro Frage kostet ein Durchlauf mit 20 Fragen nur einen Bruchteil eines Cents.
+
+Falls die App bei "Fragen laden" meldet, dass nicht genug Fragen für die gewählte Kategorie/Schwierigkeit vorhanden sind: Skript mit höherem `-Amount` erneut ausführen oder andere Filter wählen.
 
 ## 📝 Hinweise
 

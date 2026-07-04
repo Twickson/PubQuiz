@@ -198,7 +198,7 @@
             </div>
           </sc-if>
           <sc-if value="{{ noQuestions }}" hint-placeholder-val="{{ true }}">
-            <div style="text-align:center; padding:24px 10px; color:#9fb39a; font-family:'Caveat',cursive; font-size:24px; line-height:1.4;">Noch keine Fragen für diese Runde. Kategorie wählen und <b style="color:#e6c869;">Fragen laden</b> — oder eine eigene eintragen.<br><span style="font-size:17px; color:#7e8d7c;">Fragen werden automatisch ins Deutsche übersetzt · eigene Fragen direkt auf Deutsch möglich</span></div>
+            <div style="text-align:center; padding:24px 10px; color:#9fb39a; font-family:'Caveat',cursive; font-size:24px; line-height:1.4;">Noch keine Fragen für diese Runde. Kategorie wählen und <b style="color:#e6c869;">Fragen laden</b> — oder eine eigene eintragen.<br><span style="font-size:17px; color:#7e8d7c;">Fragen kommen aus der lokalen, vorab ins Deutsche übersetzten Datenbank · eigene Fragen direkt auf Deutsch möglich</span></div>
           </sc-if>
         </section>
 
@@ -330,7 +330,7 @@
   <footer style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 30px; background:linear-gradient(180deg,#291a10,#1c120a); border-top:3px solid #6e521a; color:#a98e5e; font-size:14px;">
     <span style="font-family:'Caveat',cursive; font-size:18px;">{{ footerStatus }}</span>
     <span style="font-family:'Caveat',cursive; font-size:18px;">Lokal gespeichert · Slàinte! 🍀</span>
-    <span style="font-family:'Caveat',cursive; font-size:15px; color:#7a6540;">Fragen: <a href="https://the-trivia-api.com" target="_blank" style="color:#c9a13e; text-decoration:none;">The Trivia API</a> · CC BY-NC 4.0</span>
+    <span style="font-family:'Caveat',cursive; font-size:15px; color:#7a6540;">Fragen: <a href="https://opentdb.com" target="_blank" style="color:#c9a13e; text-decoration:none;">Open Trivia DB</a> · Übersetzung: Claude</span>
   </footer>
 </div>
 
@@ -343,8 +343,10 @@ class Component extends DCLogic {
     { id: '10', opentdbId: 10, label: 'Bücher' },
     { id: '11', opentdbId: 11, label: 'Film' },
     { id: '12', opentdbId: 12, label: 'Musik' },
+    { id: '13', opentdbId: 13, label: 'Musicals & Theater' },
     { id: '14', opentdbId: 14, label: 'Fernsehen' },
     { id: '15', opentdbId: 15, label: 'Videospiele' },
+    { id: '16', opentdbId: 16, label: 'Brettspiele' },
     { id: '17', opentdbId: 17, label: 'Wissenschaft & Natur' },
     { id: '18', opentdbId: 18, label: 'Computer' },
     { id: '19', opentdbId: 19, label: 'Mathematik' },
@@ -354,9 +356,11 @@ class Component extends DCLogic {
     { id: '23', opentdbId: 23, label: 'Geschichte' },
     { id: '24', opentdbId: 24, label: 'Politik' },
     { id: '25', opentdbId: 25, label: 'Kunst' },
+    { id: '26', opentdbId: 26, label: 'Prominente' },
     { id: '27', opentdbId: 27, label: 'Tiere' },
     { id: '28', opentdbId: 28, label: 'Fahrzeuge' },
     { id: '29', opentdbId: 29, label: 'Comics' },
+    { id: '30', opentdbId: 30, label: 'Gadgets' },
     { id: '31', opentdbId: 31, label: 'Anime & Manga' },
     { id: '32', opentdbId: 32, label: 'Zeichentrick' },
   ];
@@ -376,7 +380,8 @@ class Component extends DCLogic {
       timerRunning: false,
       questions: base.questions || {}, qIndex: base.qIndex || {}, revealed: base.revealed || {},
       loadCat: '', loadDiff: '', loadAmount: 10, loading: false, apiError: '',
-      showManual: false, mQ: '', mCorrect: '', mW1: '', mW2: '', mW3: '', translating: false, selectedCats: base.selectedCats || [],
+      showManual: false, mQ: '', mCorrect: '', mW1: '', mW2: '', mW3: '', selectedCats: base.selectedCats || [],
+      usedQuestionKeys: base.usedQuestionKeys || {},
     });
   }
 
@@ -395,8 +400,8 @@ class Component extends DCLogic {
   load() { try { const r = localStorage.getItem(this.KEY); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
   save() {
     try {
-      const { teams, rounds, scores, currentRoundId, timerDuration, view, questions, qIndex, revealed, selectedCats } = this.state;
-      localStorage.setItem(this.KEY, JSON.stringify({ teams, rounds, scores, currentRoundId, timerDuration, view, questions, qIndex, revealed, selectedCats }));
+      const { teams, rounds, scores, currentRoundId, timerDuration, view, questions, qIndex, revealed, selectedCats, usedQuestionKeys } = this.state;
+      localStorage.setItem(this.KEY, JSON.stringify({ teams, rounds, scores, currentRoundId, timerDuration, view, questions, qIndex, revealed, selectedCats, usedQuestionKeys }));
     } catch (e) {}
   }
   componentDidUpdate() { this.save(); }
@@ -565,12 +570,6 @@ class Component extends DCLogic {
   }
 
   // ---- questions ----
-  decode(str) {
-    if (str == null) return '';
-    if (!this._ta) this._ta = document.createElement('textarea');
-    this._ta.innerHTML = String(str);
-    return this._ta.value;
-  }
   shuffle(arr) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; }
@@ -581,15 +580,13 @@ class Component extends DCLogic {
   _clearRevealed(revealed, rid) {
     const out = {}; Object.keys(revealed || {}).forEach(k => { if (k.indexOf(rid + ':') !== 0) out[k] = revealed[k]; }); return out;
   }
-  async translateTexts(texts) {
-    return Promise.all(texts.map(async (text) => {
-      const url = 'https://api.mymemory.translated.net/get?' + new URLSearchParams({ q: text, langpair: 'en|de' });
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('MyMemory HTTP ' + res.status);
-      const data = await res.json();
-      if (data.responseStatus && data.responseStatus !== 200) throw new Error('MyMemory Fehler ' + data.responseStatus);
-      return data.responseData?.translatedText || text;
-    }));
+  async _loadQuestionDb() {
+    if (this._questionDb) return this._questionDb;
+    const res = await fetch('./data/questions.json');
+    if (!res.ok) throw new Error('DB HTTP ' + res.status);
+    const data = await res.json();
+    this._questionDb = data.questions || [];
+    return this._questionDb;
   }
 
   async loadQuestions() {
@@ -597,69 +594,43 @@ class Component extends DCLogic {
     if (!rid || this.state.loading) return;
     this.setState({ loading: true, apiError: '' });
     try {
-      // 1. Fragen von opentdb laden (Englisch)
-      const p = new URLSearchParams({ amount: String(this.state.loadAmount || 10), type: 'multiple' });
-      if (this.state.loadCat) p.set('category', this.state.loadCat);
-      if (this.state.loadDiff) p.set('difficulty', this.state.loadDiff);
-      const res = await fetch('https://opentdb.com/api.php?' + p.toString());
-      const data = await res.json();
-      if (data.response_code !== 0 || !data.results?.length) {
-        const msg = data.response_code === 1 ? 'Nicht genug Fragen für diese Auswahl.'
-          : data.response_code === 5 ? 'Zu viele Anfragen — kurz warten.'
-          : 'Fragen konnten nicht geladen werden (Code ' + data.response_code + ').';
-        this.setState({ loading: false, apiError: msg }); return;
-      }
-      const raw = data.results.map(r => ({
-        q: this.decode(r.question),
-        correct: this.decode(r.correct_answer),
-        incs: (r.incorrect_answers || []).map(x => this.decode(x)),
-        category: this.TRIVIA_CATS.find(c => c.opentdbId === r.category)?.label || this.decode(r.category),
-        difficulty: r.difficulty,
-      }));
+      const db = await this._loadQuestionDb();
+      const catId = this.state.loadCat ? Number(this.state.loadCat) : null;
+      const diff = this.state.loadDiff || null;
+      const amount = this.state.loadAmount || 10;
+      const used = this.state.usedQuestionKeys || {};
+      const matches = (q) => (!catId || q.category === catId) && (!diff || q.difficulty === diff);
 
-      this.setState({ loading: false, translating: true });
+      let pool = db.filter(q => matches(q) && !used[q.en.q]);
+      if (pool.length < amount) pool = db.filter(matches);
 
-      // 2. Alle Texte flach sammeln → übersetzen → zurückzuordnen
-      const allTexts = [];
-      raw.forEach(r => { allTexts.push(r.q); allTexts.push(r.correct); r.incs.forEach(x => allTexts.push(x)); });
-
-      let translated = null;
-      try { translated = await this.translateTexts(allTexts); } catch (e) { /* Fallback: Englisch */ }
-
-      let idx = 0;
-      const qs = raw.map(r => {
-        const q        = translated ? translated[idx++] : r.q;
-        const correct  = translated ? translated[idx++] : r.correct;
-        const incs     = r.incs.map(() => translated ? translated[idx++] : (idx++, r.incs[idx - 1 - r.incs.length]));
-        return { q, correct, options: this.shuffle([correct, ...incs]), category: r.category, difficulty: r.difficulty, type: 'multiple' };
-      });
-
-      // Fallback-Korrektur falls translated null (dann idx falsch): neu mappen
-      if (!translated) {
-        const qsFallback = raw.map(r => ({
-          q: r.q, correct: r.correct,
-          options: this.shuffle([r.correct, ...r.incs]),
-          category: r.category, difficulty: r.difficulty, type: 'multiple',
-        }));
-        this.setState(st => ({
-          translating: false,
-          questions: Object.assign({}, st.questions, { [rid]: qsFallback }),
-          qIndex: Object.assign({}, st.qIndex, { [rid]: 0 }),
-          revealed: this._clearRevealed(st.revealed, rid),
-          apiError: 'Übersetzung fehlgeschlagen — Fragen auf Englisch geladen.',
-        }));
+      if (pool.length === 0) {
+        this.setState({ loading: false, apiError: 'Keine Fragen in der Datenbank für diese Auswahl — Übersetzungs-Skript ausführen oder Filter ändern.' });
         return;
       }
 
+      const picked = this.shuffle(pool).slice(0, amount);
+      const qs = picked.map(q => ({
+        q: q.de.q,
+        correct: q.de.correct,
+        options: this.shuffle([q.de.correct, ...q.de.incorrect]),
+        category: this.TRIVIA_CATS.find(c => c.opentdbId === q.category)?.label || 'Sonstiges',
+        difficulty: q.difficulty,
+        type: 'multiple',
+      }));
+      const newUsed = Object.assign({}, used);
+      picked.forEach(q => { newUsed[q.en.q] = true; });
+
       this.setState(st => ({
-        translating: false,
+        loading: false,
         questions: Object.assign({}, st.questions, { [rid]: qs }),
         qIndex: Object.assign({}, st.qIndex, { [rid]: 0 }),
         revealed: this._clearRevealed(st.revealed, rid),
-        apiError: '',
+        usedQuestionKeys: newUsed,
+        apiError: picked.length < amount ? `Nur ${picked.length} passende Fragen in der Datenbank gefunden (angefragt: ${amount}).` : '',
       }));
     } catch (e) {
-      this.setState({ loading: false, translating: false, apiError: 'Netzwerkfehler — Internetverbindung prüfen.' });
+      this.setState({ loading: false, apiError: 'Fragen-Datenbank konnte nicht geladen werden — data/questions.json prüfen.' });
     }
   }
   addManual() {
@@ -864,7 +835,7 @@ class Component extends DCLogic {
       onDiff: (e) => this.setLoad('loadDiff', e.target.value),
       onAmount: (e) => this.setLoad('loadAmount', parseInt(e.target.value, 10) || 10),
       loadQuestions: () => this.loadQuestions(),
-      loadBtnLabel: s.translating ? 'Übersetze…' : s.loading ? 'Lädt…' : 'Fragen laden',
+      loadBtnLabel: s.loading ? 'Lädt…' : 'Fragen laden',
       hasError: !!s.apiError, apiError: s.apiError || '',
       showManual: !!s.showManual, toggleManual: () => this.toggleManual(),
       mQ: s.mQ || '', mCorrect: s.mCorrect || '', mW1: s.mW1 || '', mW2: s.mW2 || '', mW3: s.mW3 || '',

@@ -551,8 +551,9 @@ class Component extends DCLogic {
   newGame() { this.setState({ scores: {}, view: 'setup' }); }
   resetAll() {
     if (this._tick) { clearInterval(this._tick); this._tick = null; }
+    const usedQuestionKeys = this.state.usedQuestionKeys || {};
     try { localStorage.removeItem(this.KEY); } catch (e) {}
-    this.setState(Object.assign({}, this.seed(), { newTeamName: '', timerRemaining: 60, timerRunning: false }));
+    this.setState(Object.assign({}, this.seed(), { newTeamName: '', timerRemaining: 60, timerRunning: false, usedQuestionKeys }));
   }
 
   // ---- derived ----

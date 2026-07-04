@@ -20,4 +20,5 @@ window.PUBQUIZ_FIREBASE_CONFIG = {
   storageBucket: "pubquiz-b19d4.firebasestorage.app",
   messagingSenderId: "248945233312",
   appId: "1:248945233312:web:71e57d5654e201a42a68c5",
+  measurementId: "G-06744FQJJB"
 };

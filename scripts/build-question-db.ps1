@@ -12,7 +12,7 @@
   .\scripts\build-question-db.ps1 -Amount 20
 #>
 param(
-  [int]$Amount = 20
+  [int]$Amount = 100
 )
 
 $ErrorActionPreference = 'Stop'

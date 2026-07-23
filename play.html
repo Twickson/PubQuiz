@@ -317,6 +317,9 @@
 
   async function init() {
     await waitForFirebase();
+    // Per QR-Code kommt der Session-Code als ?code=XXXX in der URL an — Feld
+    // vorbefüllen, damit nur noch der Teamname eingetippt werden muss.
+    const urlCode = (new URLSearchParams(location.search).get('code') || '').trim().toUpperCase();
     const cached = loadCached();
     if (cached && cached.code) {
       codeInput.value = cached.code;
@@ -324,7 +327,14 @@
       // Automatischer Reconnect: gleiche uid (Firebase Anonymous Auth persistiert
       // sie im Browser) landet wieder im selben Spieler-Eintrag der Session.
       const ok = await join(cached.code, cached.name, { silent: true });
-      if (!ok) showScreen('join');
+      if (!ok) {
+        if (urlCode) codeInput.value = urlCode;
+        showScreen('join');
+      }
+    } else if (urlCode) {
+      codeInput.value = urlCode;
+      showScreen('join');
+      nameInput.focus();
     } else {
       showScreen('join');
     }

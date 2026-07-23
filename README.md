@@ -132,7 +132,7 @@ Teams treten mit ihrem eigenen Handy per Session-Code bei — ganz ohne Account 
 ### Ablauf
 
 1. **Im Setup-Bildschirm** auf **"Live-Voting starten"** klicken → ein 4-stelliger Code erscheint
-2. Teams öffnen `play.html` (z. B. `https://DEIN-USERNAME.github.io/pub-quiz/play.html`) auf ihrem Handy, geben den Code **und ihren Teamnamen** ein und treten bei
+2. Teams öffnen `play.html` (z. B. `https://DEIN-USERNAME.github.io/pub-quiz/play.html`) auf ihrem Handy, geben den Code **und ihren Teamnamen** ein und treten bei — oder scannen einfach den **QR-Code**, der neben dem Session-Code angezeigt wird; dann ist der Code schon ausgefüllt und es muss nur noch der Teamname eingetippt werden
 3. Beigetretene Teams erscheinen automatisch in der Teamliste im Setup (📱-Symbol) — zusätzlich können weiterhin Teams ohne Smartphone manuell eingetragen werden
 4. Kategorien wählen, Quiz starten wie gewohnt
 5. Jede angezeigte Frage erscheint automatisch auf allen Handys; Teams können ihre Antwort **beliebig oft ändern**, solange der Spielleiter noch nicht aufgedeckt hat

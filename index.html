@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./firebase-config.js"></script>
 <script type="module" src="./firebase-live.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -66,12 +67,15 @@
             </div>
           </sc-if>
           <sc-if value="{{ liveActive }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;">
               <div>
                 <span style="font-family:'Caveat',cursive; font-size:17px; color:#7a5a1e;">Session-Code:</span>
                 <span style="font-family:'Alfa Slab One',serif; font-size:28px; letter-spacing:3px; color:#3a2a14; margin-left:6px;">{{ liveSessionCode }}</span>
                 <div style="font-family:'Caveat',cursive; font-size:15px; color:#8a7140;">{{ liveParticipantLabel }} · Teams beitreten unter {{ liveJoinUrl }}</div>
               </div>
+              <sc-if value="{{ showLiveQr }}" hint-placeholder-val="{{ false }}">
+                <img src="{{ liveQrDataUrl }}" alt="QR-Code zum Beitreten" title="Scannen zum Beitreten" style="width:76px; height:76px; border-radius:6px; border:1px solid #b89b63; background:#fff; flex:none;" />
+              </sc-if>
               <button onClick="{{ stopLiveSession }}" style="cursor:pointer; font-family:'Lora',serif; font-weight:700; font-size:13px; padding:7px 12px; border-radius:7px; border:1px solid #7a3b2b; background:rgba(180,70,60,.16); color:#7a3b2b;">Beenden</button>
             </div>
           </sc-if>
@@ -257,12 +261,15 @@
               </div>
             </sc-if>
             <sc-if value="{{ liveActive }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
                 <div>
                   <span style="font-family:'Caveat',cursive; font-size:16px; color:#7a5a1e;">Session-Code:</span>
                   <span style="font-family:'Alfa Slab One',serif; font-size:26px; letter-spacing:3px; color:#3a2a14; margin-left:6px;">{{ liveSessionCode }}</span>
                   <div style="font-family:'Caveat',cursive; font-size:14px; color:#8a7140;">{{ liveParticipantLabel }} · {{ liveJoinUrl }}</div>
                 </div>
+                <sc-if value="{{ showLiveQr }}" hint-placeholder-val="{{ false }}">
+                  <img src="{{ liveQrDataUrl }}" alt="QR-Code zum Beitreten" title="Scannen zum Beitreten" style="width:64px; height:64px; border-radius:6px; border:1px solid #b89b63; background:#fff; flex:none;" />
+                </sc-if>
                 <button onClick="{{ stopLiveSession }}" style="cursor:pointer; font-family:'Lora',serif; font-weight:700; font-size:13px; padding:7px 12px; border-radius:7px; border:1px solid #7a3b2b; background:rgba(180,70,60,.16); color:#7a3b2b;">Beenden</button>
               </div>
             </sc-if>
@@ -436,7 +443,7 @@ class Component extends DCLogic {
       loadCat: '', loadDiff: '', loadAmount: 10, loading: false, apiError: '',
       showManual: false, mQ: '', mCorrect: '', mW1: '', mW2: '', mW3: '', selectedCats: base.selectedCats || [],
       usedQuestionKeys: base.usedQuestionKeys || {},
-      liveSessionCode: base.liveSessionCode || null, liveTeams: null, liveBusy: false,
+      liveSessionCode: base.liveSessionCode || null, liveTeams: null, liveBusy: false, liveQrDataUrl: null,
     });
   }
 
@@ -463,6 +470,7 @@ class Component extends DCLogic {
   componentDidMount() {
     if (this.state.liveSessionCode && window.fbEnsureAuth) {
       window.fbEnsureAuth().then(() => this._attachLiveTeamsListener()).catch(() => {});
+      this._refreshLiveQr();
     }
   }
   componentWillUnmount() {
@@ -471,6 +479,27 @@ class Component extends DCLogic {
   }
 
   // ---- live voting ----
+  _liveJoinUrl(code) {
+    if (typeof location === 'undefined') return '';
+    return location.origin + location.pathname.replace(/index\.html$/, '') + 'play.html?code=' + code;
+  }
+  _refreshLiveQr() {
+    const code = this.state.liveSessionCode;
+    if (!code || typeof QRCode === 'undefined') { this.setState({ liveQrDataUrl: null }); return; }
+    // qrcodejs zeichnet in ein (nie eingehängtes) Div über Canvas; das
+    // funktioniert auch losgelöst vom sichtbaren DOM. Ergebnis als Data-URL
+    // im State ablegen statt die Bibliothek direkt ins Template-DOM zeichnen
+    // zu lassen — sonst würde ein Re-Render (z.B. Timer-Tick) das Canvas killen.
+    const holder = document.createElement('div');
+    try {
+      new QRCode(holder, { text: this._liveJoinUrl(code), width: 180, height: 180, correctLevel: QRCode.CorrectLevel.M });
+      const canvas = holder.querySelector('canvas');
+      const dataUrl = canvas ? canvas.toDataURL('image/png') : (holder.querySelector('img') || {}).src || null;
+      this.setState({ liveQrDataUrl: dataUrl });
+    } catch (e) {
+      this.setState({ liveQrDataUrl: null });
+    }
+  }
   startLiveSession() {
     if (!window.fbIsConfigured || !window.fbIsConfigured()) {
       this.setState({ apiError: 'Live-Voting ist nicht konfiguriert — firebase-config.js ausfüllen (siehe README).' });
@@ -480,6 +509,7 @@ class Component extends DCLogic {
     window.fbCreateSession().then(code => {
       this.setState({ liveSessionCode: code, liveBusy: false });
       this._attachLiveTeamsListener();
+      this._refreshLiveQr();
       this._lastSyncedSig = null;
     }).catch(e => {
       this.setState({ liveBusy: false, apiError: 'Live-Session konnte nicht erstellt werden: ' + e.message });
@@ -489,7 +519,7 @@ class Component extends DCLogic {
     const code = this.state.liveSessionCode;
     if (this._teamsUnsub) { this._teamsUnsub(); this._teamsUnsub = null; }
     if (code && window.fbEndSession) window.fbEndSession(code).catch(() => {});
-    this.setState({ liveSessionCode: null, liveTeams: null });
+    this.setState({ liveSessionCode: null, liveTeams: null, liveQrDataUrl: null });
   }
   _attachLiveTeamsListener() {
     if (!this.state.liveSessionCode || !window.fbListenTeams) return;
@@ -984,6 +1014,7 @@ class Component extends DCLogic {
       liveBtnLabel: s.liveBusy ? 'Starte…' : 'Starten',
       liveSessionCode: s.liveSessionCode || '', liveJoinUrl, liveParticipantCount,
       liveParticipantLabel: liveParticipantCount + (liveParticipantCount === 1 ? ' Handy verbunden' : ' Handys verbunden'),
+      liveQrDataUrl: s.liveQrDataUrl || '', showLiveQr: !!s.liveQrDataUrl,
       startLiveSession: () => this.startLiveSession(), stopLiveSession: () => this.stopLiveSession(),
       showVoteProgress: liveActive && hasQuestions && liveParticipantCount > 0 && !isRevealed,
       liveVoteProgressLabel: liveVoteTotal + ' von ' + liveParticipantCount + (liveParticipantCount === 1 ? ' Team hat' : ' Teams haben') + ' abgestimmt',

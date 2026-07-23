@@ -1,5 +1,5 @@
 // Live-Voting: gemeinsame Firebase-Anbindung für Spielleiter (index.html) und
-// Mitspieler-Seite (play.html). Wird als <script type="module"> eingebunden,
+// Team-Beitritts-Seite (play.html). Wird als <script type="module"> eingebunden,
 // stellt ihre Funktionen aber bewusst auf `window` bereit, damit der
 // dc-Runtime-Anwendungscode (kein ES-Modul) sie einfach aufrufen kann.
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
@@ -51,7 +51,10 @@ window.fbCreateSession = async function () {
     const code = makeSessionCode();
     const snap = await get(ref(db, `sessions/${code}`));
     if (snap.exists()) continue;
-    await set(ref(db, `sessions/${code}`), {
+    // update() statt set(): wertet Schreibrechte pro Feld aus (passend zu den
+    // Security Rules, die pro Kind-Pfad greifen). Ein set() auf diesem Pfad
+    // bräuchte eine .write-Regel direkt auf sessions/$sessionCode selbst.
+    await update(ref(db, `sessions/${code}`), {
       hostUid: user.uid,
       status: 'waiting',
       createdAt: Date.now(),
@@ -74,10 +77,10 @@ window.fbSyncQuestion = async function (code, question) {
   });
 };
 
-window.fbListenVotes = function (code, cb) {
+window.fbListenTeams = function (code, cb) {
   init();
   if (!isConfigured) return () => {};
-  return onValue(ref(db, `sessions/${code}/players`), (snap) => cb(snap.val() || {}));
+  return onValue(ref(db, `sessions/${code}/teams`), (snap) => cb(snap.val() || {}));
 };
 
 window.fbListenSession = function (code, cb) {
@@ -86,27 +89,37 @@ window.fbListenSession = function (code, cb) {
   return onValue(ref(db, `sessions/${code}`), (snap) => cb(snap.val()));
 };
 
-window.fbJoinSession = async function (code, name) {
+window.fbJoinSession = async function (code, teamName) {
   const user = await ensureAuth();
   const snap = await get(ref(db, `sessions/${code}`));
   if (!snap.exists() || snap.val().status === 'ended') {
     throw new Error('Session nicht gefunden oder bereits beendet.');
   }
-  await set(ref(db, `sessions/${code}/players/${user.uid}`), {
-    name: name || 'Anonym',
-    lastSeen: Date.now(),
-  });
-  return user.uid;
-};
 
-window.fbCheckPlayerExists = async function (code, uid) {
-  init();
-  if (!isConfigured) return null;
-  const snap = await get(ref(db, `sessions/${code}/players/${uid}`));
-  return snap.exists() ? snap.val() : null;
+  // Doppelte Teamnamen automatisch durchnummerieren, damit im Pult keine zwei
+  // gleich benannten Teams auftauchen. Der eigene, bereits bestehende Eintrag
+  // (Reconnect) zählt dabei nicht als Kollision, sonst würde sich ein Team bei
+  // jedem erneuten Beitreten selbst immer weiter hochzählen.
+  const teams = (snap.val() && snap.val().teams) || {};
+  const baseName = (teamName || 'Team').trim() || 'Team';
+  const isTaken = (n) => Object.keys(teams).some(uid =>
+    uid !== user.uid && teams[uid] && (teams[uid].name || '').trim().toLowerCase() === n.toLowerCase()
+  );
+  let finalName = baseName;
+  let suffix = 2;
+  while (isTaken(finalName)) {
+    finalName = `${baseName} (${suffix})`;
+    suffix++;
+  }
+
+  await set(ref(db, `sessions/${code}/teams/${user.uid}`), {
+    name: finalName,
+    joinedAt: Date.now(),
+  });
+  return { uid: user.uid, name: finalName };
 };
 
 window.fbSubmitVote = async function (code, questionId, optionIndex) {
   const user = await ensureAuth();
-  await set(ref(db, `sessions/${code}/players/${user.uid}/votes/${questionId}`), optionIndex);
+  await set(ref(db, `sessions/${code}/teams/${user.uid}/votes/${questionId}`), optionIndex);
 };

@@ -15,12 +15,12 @@
         "currentQuestion": {
           ".write": "auth != null && auth.uid === newData.parent().child('hostUid').val()"
         },
-        "players": {
+        "teams": {
           "$uid": {
             ".write": "auth != null && auth.uid === $uid",
             "votes": {
               "$questionId": {
-                ".write": "auth != null && auth.uid === $uid && !data.exists()"
+                ".write": "auth != null && auth.uid === $uid"
               }
             }
           }

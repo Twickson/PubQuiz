@@ -12,7 +12,7 @@
   .\scripts\build-question-db.ps1 -Amount 20
 #>
 param(
-  [int]$Amount = 100
+  [int]$Amount = 200
 )
 
 $ErrorActionPreference = 'Stop'
@@ -139,78 +139,114 @@ if ($newRaw.Count -gt $Amount) {
 
 Write-Host "$($newRaw.Count) neue Fragen gefunden. Uebersetze via Claude Haiku 4.5..."
 
-$flatTexts = New-Object System.Collections.Generic.List[string]
-foreach ($q in $newRaw) {
-  $flatTexts.Add($q.en.q)
-  $flatTexts.Add($q.en.correct)
-  foreach ($inc in $q.en.incorrect) { $flatTexts.Add($inc) }
-}
+# In Batches uebersetzen statt alles auf einmal: bei grossen -Amount-Werten
+# wuerde eine einzelne Antwort das max_tokens-Limit sprengen und mitten im
+# JSON abgeschnitten werden. Nach jedem Batch wird sofort gespeichert, damit
+# bei einem spaeteren Fehler bereits uebersetzte Fragen nicht verloren gehen.
+$batchSize = 25
+$totalTranslated = 0
 
-$inputJson = $flatTexts | ConvertTo-Json -Depth 5
-$prompt = @"
+$httpClient = New-Object System.Net.Http.HttpClient
+$httpClient.Timeout = [TimeSpan]::FromSeconds(120)
+$httpClient.DefaultRequestHeaders.Add('x-api-key', $env:ANTHROPIC_API_KEY)
+$httpClient.DefaultRequestHeaders.Add('anthropic-version', '2023-06-01')
+
+try {
+  for ($batchStart = 0; $batchStart -lt $newRaw.Count; $batchStart += $batchSize) {
+    $count = [Math]::Min($batchSize, $newRaw.Count - $batchStart)
+    $batch = $newRaw.GetRange($batchStart, $count)
+    $batchNum = [Math]::Floor($batchStart / $batchSize) + 1
+    $batchTotal = [Math]::Ceiling($newRaw.Count / $batchSize)
+
+    $flatTexts = New-Object System.Collections.Generic.List[string]
+    foreach ($q in $batch) {
+      $flatTexts.Add($q.en.q)
+      $flatTexts.Add($q.en.correct)
+      foreach ($inc in $q.en.incorrect) { $flatTexts.Add($inc) }
+    }
+
+    Write-Host "Batch $batchNum/$batchTotal ($($batch.Count) Fragen)..."
+
+    $inputJson = $flatTexts | ConvertTo-Json -Depth 5
+    $prompt = @"
 Uebersetze die folgenden Trivia-Quizfragen und Antworten ins Deutsche. Erhalte die Bedeutung exakt und verwende natuerliche, im Pub-Quiz uebliche Formulierungen. Gib ausschliesslich ein JSON-Objekt im Format {"translations": ["...", "...", ...]} zurueck, mit genau so vielen Eintraegen wie die Eingabe, in identischer Reihenfolge. Keine Erklaerungen, kein Markdown, nur das JSON-Objekt.
 
 Eingabe:
 $inputJson
 "@
 
-$requestBody = @{
-  model      = 'claude-haiku-4-5'
-  max_tokens = 8192
-  messages   = @(@{ role = 'user'; content = $prompt })
-} | ConvertTo-Json -Depth 10
+    $requestBody = @{
+      model      = 'claude-haiku-4-5'
+      max_tokens = 8192
+      messages   = @(@{ role = 'user'; content = $prompt })
+    } | ConvertTo-Json -Depth 10
 
-$httpClient = New-Object System.Net.Http.HttpClient
-$httpClient.DefaultRequestHeaders.Add('x-api-key', $env:ANTHROPIC_API_KEY)
-$httpClient.DefaultRequestHeaders.Add('anthropic-version', '2023-06-01')
-$content = New-Object System.Net.Http.StringContent($requestBody, [System.Text.Encoding]::UTF8, 'application/json')
+    $content = New-Object System.Net.Http.StringContent($requestBody, [System.Text.Encoding]::UTF8, 'application/json')
 
-try {
-  $response = $httpClient.PostAsync('https://api.anthropic.com/v1/messages', $content).GetAwaiter().GetResult()
-  $bytes = $response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult()
-  $responseText = [System.Text.Encoding]::UTF8.GetString($bytes)
+    try {
+      $response = $httpClient.PostAsync('https://api.anthropic.com/v1/messages', $content).GetAwaiter().GetResult()
+      $bytes = $response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult()
+      $responseText = [System.Text.Encoding]::UTF8.GetString($bytes)
+    } catch {
+      Write-Warning "Batch $batchNum uebersprungen (HTTP-Fehler): $_"
+      continue
+    }
+
+    if (-not $response.IsSuccessStatusCode) {
+      Write-Warning "Batch $batchNum uebersprungen (Anthropic API HTTP $($response.StatusCode)): $responseText"
+      continue
+    }
+
+    try {
+      $responseJson = $responseText | ConvertFrom-Json
+      $rawText = $responseJson.content[0].text
+      $rawText = $rawText -replace '^```json\s*', '' -replace '^```\s*', '' -replace '```\s*$', ''
+      $parsed = $rawText | ConvertFrom-Json
+      $translations = @($parsed.translations)
+    } catch {
+      Write-Warning "Batch $batchNum uebersprungen (Antwort war kein gueltiges JSON, evtl. durch max_tokens abgeschnitten): $_"
+      continue
+    }
+
+    if ($translations.Count -ne $flatTexts.Count) {
+      Write-Warning "Batch $batchNum uebersprungen (erwartet $($flatTexts.Count) Uebersetzungen, erhalten $($translations.Count))."
+      continue
+    }
+
+    $idx = 0
+    foreach ($q in $batch) {
+      $deQ = $translations[$idx]; $idx++
+      $deCorrect = $translations[$idx]; $idx++
+      $deIncorrect = @()
+      foreach ($inc in $q.en.incorrect) { $deIncorrect += $translations[$idx]; $idx++ }
+
+      $entry = [PSCustomObject]@{
+        category   = $q.category
+        difficulty = $q.difficulty
+        en         = $q.en
+        de         = [PSCustomObject]@{ q = $deQ; correct = $deCorrect; incorrect = $deIncorrect }
+      }
+      $questionsList.Add($entry)
+      $totalTranslated++
+    }
+
+    # Nach jedem Batch sofort speichern statt erst am Ende.
+    $db.questions = $questionsList.ToArray()
+    $outJson = $db | ConvertTo-Json -Depth 10
+    [System.IO.File]::WriteAllText($dbPath, $outJson, (New-Object System.Text.UTF8Encoding($false)))
+
+    if ($batchStart + $count -lt $newRaw.Count) { Start-Sleep -Seconds 2 }
+  }
 } finally {
   $httpClient.Dispose()
 }
 
-if (-not $response.IsSuccessStatusCode) {
-  Write-Error "Anthropic API HTTP $($response.StatusCode): $responseText"
-  exit 1
-}
-
-$responseJson = $responseText | ConvertFrom-Json
-$rawText = $responseJson.content[0].text
-$rawText = $rawText -replace '^```json\s*', '' -replace '^```\s*', '' -replace '```\s*$', ''
-$parsed = $rawText | ConvertFrom-Json
-$translations = @($parsed.translations)
-
-if ($translations.Count -ne $flatTexts.Count) {
-  Write-Error "Uebersetzung unvollstaendig oder fehlerhaft (erwartet $($flatTexts.Count), erhalten $($translations.Count)). Keine Aenderungen gespeichert."
-  exit 1
-}
-
-$idx = 0
-foreach ($q in $newRaw) {
-  $deQ = $translations[$idx]; $idx++
-  $deCorrect = $translations[$idx]; $idx++
-  $deIncorrect = @()
-  foreach ($inc in $q.en.incorrect) { $deIncorrect += $translations[$idx]; $idx++ }
-
-  $entry = [PSCustomObject]@{
-    category   = $q.category
-    difficulty = $q.difficulty
-    en         = $q.en
-    de         = [PSCustomObject]@{ q = $deQ; correct = $deCorrect; incorrect = $deIncorrect }
-  }
-  $questionsList.Add($entry)
-}
-
-$db.questions = $questionsList.ToArray()
-$outJson = $db | ConvertTo-Json -Depth 10
-[System.IO.File]::WriteAllText($dbPath, $outJson, (New-Object System.Text.UTF8Encoding($false)))
-
 Write-Host ""
-Write-Host "$($newRaw.Count) Fragen uebersetzt und gespeichert."
+if ($totalTranslated -eq 0) {
+  Write-Error "Keine der $($newRaw.Count) neuen Fragen konnte uebersetzt werden."
+  exit 1
+}
+Write-Host "$totalTranslated von $($newRaw.Count) neuen Fragen uebersetzt und gespeichert."
 Write-Host "Datenbank enthaelt jetzt $($questionsList.Count) Fragen insgesamt."
 Write-Host ""
 Write-Host "Nicht vergessen: git add data/questions.json, committen und pushen, damit die Website die neuen Fragen bekommt."

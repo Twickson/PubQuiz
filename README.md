@@ -115,7 +115,7 @@ Falls die App bei "Fragen laden" meldet, dass nicht genug Fragen für die gewäh
 
 ## 📱 Live-Voting per Smartphone (optional)
 
-Zuschauer können mit ihrem eigenen Handy per Session-Code beitreten und live pro Frage abstimmen — ganz ohne Account. Die Ergebnisse erscheinen in Echtzeit im Spielleiter-Pult. Das Feature ist **optional**: Ohne Einrichtung läuft die App wie gewohnt, nur der "Live-Voting starten"-Button meldet dann, dass es nicht konfiguriert ist.
+Teams treten mit ihrem eigenen Handy per Session-Code bei — ganz ohne Account — und stimmen live pro Frage ab. Punkte werden bei richtiger Antwort automatisch vergeben. Das Feature ist **optional**: Ohne Einrichtung läuft die App wie gewohnt (manuelle Teameingabe, manuelle Punktevergabe), nur der "Live-Voting starten"-Button meldet dann, dass es nicht konfiguriert ist.
 
 ### Einmaliges Setup
 
@@ -129,13 +129,16 @@ Zuschauer können mit ihrem eigenen Handy per Session-Code beitreten und live pr
 
 **Wichtig:** Die Werte in `firebase-config.js` sind kein Geheimnis wie ein API-Key sonst — Firebase-Web-Configs dürfen öffentlich im Client-Code stehen. Der eigentliche Zugriffsschutz läuft über die Security Rules (`database.rules.json`), nicht über Geheimhaltung dieser Datei.
 
-### Benutzung
+### Ablauf
 
-- Im Spielleiter-Pult (Spielansicht) auf **"Live-Voting starten"** klicken → ein 4-stelliger Code erscheint
-- Mitspieler öffnen `play.html` (z. B. `https://DEIN-USERNAME.github.io/pub-quiz/play.html`) auf ihrem Handy, geben den Code ein und treten bei
-- Jede Frage, die der Spielleiter zeigt, erscheint automatisch auf allen Handys; Stimmen werden live im Pult als Balken neben den Antworten angezeigt
-- Bricht die Verbindung ab (Handy sperrt, Netz weg), reicht es, `play.html` erneut zu öffnen — der Code wird automatisch vorausgefüllt und das Gerät meldet sich beim selben Session-Eintrag an, ganz ohne erneutes Eintippen des Namens
-- **"Beenden"** im Pult schließt die Session; auf den Handys erscheint dann ein Hinweis, dass die Session vorbei ist
+1. **Im Setup-Bildschirm** auf **"Live-Voting starten"** klicken → ein 4-stelliger Code erscheint
+2. Teams öffnen `play.html` (z. B. `https://DEIN-USERNAME.github.io/pub-quiz/play.html`) auf ihrem Handy, geben den Code **und ihren Teamnamen** ein und treten bei
+3. Beigetretene Teams erscheinen automatisch in der Teamliste im Setup (📱-Symbol) — zusätzlich können weiterhin Teams ohne Smartphone manuell eingetragen werden
+4. Kategorien wählen, Quiz starten wie gewohnt
+5. Jede angezeigte Frage erscheint automatisch auf allen Handys; Teams können ihre Antwort **beliebig oft ändern**, solange der Spielleiter noch nicht aufgedeckt hat
+6. **"Antwort aufdecken"** deckt die Lösung auf allen Handys auf **und vergibt automatisch Punkte** an Teams mit richtiger Stimme — die manuellen +/- Buttons bleiben für Korrekturen weiterhin verfügbar
+7. Bricht die Verbindung ab (Handy sperrt, Netz weg), reicht es, `play.html` erneut zu öffnen — Code und Teamname werden automatisch vorausgefüllt und das Gerät meldet sich beim selben Team wieder an
+8. **"Beenden"** schließt die Session; auf den Handys erscheint dann ein Hinweis, dass die Session vorbei ist
 
 ### Kosten & Grenzen
 

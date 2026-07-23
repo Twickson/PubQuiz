@@ -88,13 +88,14 @@
 
   <h1>🍺 Pub Quiz</h1>
   <div class="sub">Mitspielen per Handy</div>
+  <div id="renameNotice" style="display:none; max-width:420px; width:100%; margin-bottom:14px; padding:10px 14px; border-radius:8px; background:rgba(230,200,105,.16); border:1px solid rgba(230,200,105,.5); color:#e6c869; font-family:'Caveat',cursive; font-size:16px; text-align:center;"></div>
 
   <div id="screens">
 
     <div id="joinScreen">
       <div class="card">
         <input id="codeInput" placeholder="CODE" maxlength="6" inputmode="text" autocapitalize="characters" />
-        <input id="nameInput" placeholder="Dein Name (optional)" maxlength="24" />
+        <input id="nameInput" placeholder="Teamname" maxlength="26" />
         <button id="joinBtn">Beitreten</button>
         <div id="joinError" class="error" style="display:none;"></div>
         <div class="hint">Den Code bekommst du vom Spielleiter</div>
@@ -158,11 +159,24 @@
   const optionsList = document.getElementById('optionsList');
   const questionStatus = document.getElementById('questionStatus');
   const waitingText = document.getElementById('waitingText');
+  const renameNotice = document.getElementById('renameNotice');
+
+  let renameNoticeTimer = null;
+  function showRenameNotice(msg) {
+    renameNotice.textContent = msg;
+    renameNotice.style.display = 'block';
+    clearTimeout(renameNoticeTimer);
+    renameNoticeTimer = setTimeout(() => { renameNotice.style.display = 'none'; }, 7000);
+  }
 
   const STORE_KEY = 'pubquiz_play_session';
   let currentCode = null;
+  let myUid = null;
+  let myVotes = {}; // { questionId: optionIndex } — eigene Stimmen dieses Teams
+  let currentQ = null;
+  let currentRevealed = false;
   let unsubscribeSession = null;
-  let votedQuestionId = null;
+  let unsubscribeTeams = null;
 
   function loadCached() {
     try { return JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); } catch (e) { return null; }
@@ -181,13 +195,26 @@
 
   async function attachSession(code) {
     if (unsubscribeSession) { unsubscribeSession(); unsubscribeSession = null; }
+    if (unsubscribeTeams) { unsubscribeTeams(); unsubscribeTeams = null; }
     currentCode = code;
+    myUid = await window.fbGetMyUid();
+
+    // Eigene Stimmen live mitverfolgen — nötig, damit ein Reconnect mitten in
+    // einer offenen Frage die bereits abgegebene (änderbare) Antwort wiederfindet.
+    unsubscribeTeams = window.fbListenTeams(code, (teams) => {
+      const me = teams && teams[myUid];
+      myVotes = (me && me.votes) || {};
+      if (currentQ) renderQuestion(currentQ, currentRevealed);
+    });
+
     unsubscribeSession = window.fbListenSession(code, (session) => {
       if (!session || session.status === 'ended') {
         showScreen('ended');
         return;
       }
-      renderQuestion(session.currentQuestion, session.status === 'revealed');
+      currentQ = session.currentQuestion;
+      currentRevealed = session.status === 'revealed';
+      renderQuestion(currentQ, currentRevealed);
     });
   }
 
@@ -197,7 +224,7 @@
       showScreen('waiting');
       return;
     }
-    const alreadyVoted = votedQuestionId === q.id;
+    const chosen = myVotes[q.id];
     optionsList.innerHTML = '';
     q.options.forEach((opt, i) => {
       const div = document.createElement('div');
@@ -211,23 +238,26 @@
       div.appendChild(letter);
       div.appendChild(text);
 
+      if (chosen === i) div.classList.add('chosen');
       if (revealed) {
         div.classList.add('disabled');
         if (i === q.correctIndex) div.classList.add('correct');
         else div.classList.add('wrong');
-      } else if (alreadyVoted) {
-        div.classList.add('disabled');
       } else {
-        div.addEventListener('click', () => submitVote(q.id, i, div));
+        // Solange nicht aufgedeckt, bleibt jede Option klickbar — die Antwort
+        // kann beliebig oft geändert werden, bis der Spielleiter aufdeckt.
+        div.addEventListener('click', () => submitVote(q.id, i));
       }
       optionsList.appendChild(div);
     });
 
     questionStatus.style.display = 'block';
     if (revealed) {
-      questionStatus.textContent = 'Auflösung — richtige Antwort ist markiert';
-    } else if (alreadyVoted) {
-      questionStatus.textContent = 'Stimme gesendet — warte auf die Auflösung …';
+      questionStatus.textContent = chosen == null
+        ? 'Auflösung — richtige Antwort ist markiert'
+        : (chosen === q.correctIndex ? 'Richtig! 🎉' : 'Leider falsch — richtige Antwort ist markiert');
+    } else if (chosen != null) {
+      questionStatus.textContent = 'Antwort gesendet — du kannst sie noch ändern, solange die Zeit läuft';
     } else {
       questionStatus.textContent = 'Wähle eine Antwort';
     }
@@ -235,13 +265,10 @@
     showScreen('question');
   }
 
-  async function submitVote(questionId, optionIndex, el) {
-    document.querySelectorAll('.option').forEach(o => o.classList.add('disabled'));
-    el.classList.add('chosen');
+  async function submitVote(questionId, optionIndex) {
     try {
       await window.fbSubmitVote(currentCode, questionId, optionIndex);
-      votedQuestionId = questionId;
-      questionStatus.textContent = 'Stimme gesendet — warte auf die Auflösung …';
+      // myVotes wird über den Team-Listener aktualisiert, der neu rendert.
     } catch (e) {
       questionStatus.textContent = 'Fehler beim Abstimmen: ' + e.message;
     }
@@ -254,9 +281,14 @@
     }
     try {
       if (!silent) { joinBtn.disabled = true; joinBtn.textContent = 'Beitreten…'; }
-      await window.fbJoinSession(code, name);
-      saveCached(code, name);
-      votedQuestionId = null;
+      const result = await window.fbJoinSession(code, name);
+      // fbJoinSession haengt bei einem bereits vergebenen Teamnamen automatisch
+      // eine Nummer an — den TATSAECHLICH vergebenen Namen cachen, sonst wuerde
+      // sich das Team bei jedem Reconnect selbst weiter hochzaehlen.
+      saveCached(code, result.name);
+      if (result.name !== name) {
+        showRenameNotice(`Hinweis: "${name}" war schon vergeben — dein Team heißt jetzt "${result.name}".`);
+      }
       await attachSession(code);
       return true;
     } catch (e) {
@@ -272,6 +304,7 @@
     const name = (nameInput.value || '').trim();
     setJoinError('');
     if (!code) { setJoinError('Bitte Session-Code eingeben.'); return; }
+    if (!name) { setJoinError('Bitte Teamnamen eingeben.'); return; }
     await join(code, name);
   });
   codeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') joinBtn.click(); });

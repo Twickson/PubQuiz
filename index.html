@@ -57,6 +57,26 @@
           <span style="font-family:'Caveat',cursive; font-size:24px; color:#c9a13e;">Teams &amp; Runden eintragen, dann anstoßen</span>
         </div>
 
+        <!-- Live-Voting -->
+        <div style="border-radius:10px; padding:14px 18px; margin-bottom:22px; background:linear-gradient(135deg,#f1e6c8,#e6d6ae); border:1px solid #c9a13e; box-shadow:0 6px 16px rgba(0,0,0,.25);">
+          <sc-if value="{{ liveInactive }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+              <span style="font-family:'Caveat',cursive; font-size:21px; color:#7a5a1e;">📱 Teams per Smartphone beitreten lassen — Session starten, Code zeigen, Teams tippen ihren Namen ein</span>
+              <button onClick="{{ startLiveSession }}" style="cursor:pointer; font-family:'Lora',serif; font-weight:700; font-size:14px; padding:9px 18px; border-radius:8px; border:1px solid #6e521a; background:linear-gradient(180deg,#e6c869,#c9a13e); color:#2a1d07; white-space:nowrap;">{{ liveBtnLabel }}</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ liveActive }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+              <div>
+                <span style="font-family:'Caveat',cursive; font-size:17px; color:#7a5a1e;">Session-Code:</span>
+                <span style="font-family:'Alfa Slab One',serif; font-size:28px; letter-spacing:3px; color:#3a2a14; margin-left:6px;">{{ liveSessionCode }}</span>
+                <div style="font-family:'Caveat',cursive; font-size:15px; color:#8a7140;">{{ liveParticipantLabel }} · Teams beitreten unter {{ liveJoinUrl }}</div>
+              </div>
+              <button onClick="{{ stopLiveSession }}" style="cursor:pointer; font-family:'Lora',serif; font-weight:700; font-size:13px; padding:7px 12px; border-radius:7px; border:1px solid #7a3b2b; background:rgba(180,70,60,.16); color:#7a3b2b;">Beenden</button>
+            </div>
+          </sc-if>
+        </div>
+
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; align-items:start;">
 
           <!-- Teams -->
@@ -74,6 +94,9 @@
                 <div style="display:flex; align-items:center; gap:13px; background:#fbf4e0; border:1px solid #d8c391; border-radius:9px; padding:9px 12px;">
                   <div style="width:38px; height:38px; flex:none; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Alfa Slab One',serif; font-size:17px; color:#fff; background:{{ t.color }}; box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 2px 5px rgba(0,0,0,.25);">{{ t.monogram }}</div>
                   <span style="flex:1; font-size:17px; font-weight:600; color:#2a2014;">{{ t.name }}</span>
+                  <sc-if value="{{ t.viaPhone }}" hint-placeholder-val="{{ false }}">
+                    <span title="Per Smartphone beigetreten" style="font-size:16px;">📱</span>
+                  </sc-if>
                   <button onClick="{{ t.onRemove }}" title="Entfernen" style="cursor:pointer; border:none; background:transparent; color:#9a3b2b; font-size:20px; line-height:1; padding:4px 6px;">✕</button>
                 </div>
               </sc-for>
@@ -191,6 +214,9 @@
                   </div>
                 </sc-for>
               </div>
+              <sc-if value="{{ showVoteProgress }}" hint-placeholder-val="{{ false }}">
+                <div style="text-align:center; font-family:'Caveat',cursive; font-size:18px; color:#9fb39a; margin-bottom:10px;">📱 {{ liveVoteProgressLabel }}</div>
+              </sc-if>
               <div style="display:flex; align-items:center; gap:12px;">
                 <button onClick="{{ prevQuestion }}" style="cursor:pointer; font-family:'Lora',serif; font-weight:700; font-size:14px; padding:9px 16px; border-radius:8px; border:1px solid #4a5a4c; background:rgba(255,255,255,.06); color:#dfe6da;">◀ Zurück</button>
                 <div style="flex:1; display:flex; justify-content:center;">
@@ -410,7 +436,7 @@ class Component extends DCLogic {
       loadCat: '', loadDiff: '', loadAmount: 10, loading: false, apiError: '',
       showManual: false, mQ: '', mCorrect: '', mW1: '', mW2: '', mW3: '', selectedCats: base.selectedCats || [],
       usedQuestionKeys: base.usedQuestionKeys || {},
-      liveSessionCode: base.liveSessionCode || null, liveVotes: null, liveBusy: false,
+      liveSessionCode: base.liveSessionCode || null, liveTeams: null, liveBusy: false,
     });
   }
 
@@ -436,12 +462,12 @@ class Component extends DCLogic {
   componentDidUpdate() { this.save(); this._syncLiveQuestion(); }
   componentDidMount() {
     if (this.state.liveSessionCode && window.fbEnsureAuth) {
-      window.fbEnsureAuth().then(() => this._attachVoteListener()).catch(() => {});
+      window.fbEnsureAuth().then(() => this._attachLiveTeamsListener()).catch(() => {});
     }
   }
   componentWillUnmount() {
     if (this._tick) clearInterval(this._tick);
-    if (this._voteUnsub) this._voteUnsub();
+    if (this._teamsUnsub) this._teamsUnsub();
   }
 
   // ---- live voting ----
@@ -453,7 +479,7 @@ class Component extends DCLogic {
     this.setState({ liveBusy: true, apiError: '' });
     window.fbCreateSession().then(code => {
       this.setState({ liveSessionCode: code, liveBusy: false });
-      this._attachVoteListener();
+      this._attachLiveTeamsListener();
       this._lastSyncedSig = null;
     }).catch(e => {
       this.setState({ liveBusy: false, apiError: 'Live-Session konnte nicht erstellt werden: ' + e.message });
@@ -461,15 +487,27 @@ class Component extends DCLogic {
   }
   stopLiveSession() {
     const code = this.state.liveSessionCode;
-    if (this._voteUnsub) { this._voteUnsub(); this._voteUnsub = null; }
+    if (this._teamsUnsub) { this._teamsUnsub(); this._teamsUnsub = null; }
     if (code && window.fbEndSession) window.fbEndSession(code).catch(() => {});
-    this.setState({ liveSessionCode: null, liveVotes: null });
+    this.setState({ liveSessionCode: null, liveTeams: null });
   }
-  _attachVoteListener() {
-    if (!this.state.liveSessionCode || !window.fbListenVotes) return;
-    if (this._voteUnsub) this._voteUnsub();
-    this._voteUnsub = window.fbListenVotes(this.state.liveSessionCode, (players) => {
-      this.setState({ liveVotes: players });
+  _attachLiveTeamsListener() {
+    if (!this.state.liveSessionCode || !window.fbListenTeams) return;
+    if (this._teamsUnsub) this._teamsUnsub();
+    this._teamsUnsub = window.fbListenTeams(this.state.liveSessionCode, (teamsData) => {
+      this.setState(st => {
+        const existingIds = new Set(st.teams.map(t => t.id));
+        const joined = [];
+        Object.keys(teamsData || {}).forEach(uid => {
+          if (existingIds.has(uid) || st.teams.length + joined.length >= 10) return;
+          const name = (teamsData[uid] && teamsData[uid].name) || 'Team';
+          joined.push({ id: uid, name, color: this.PALETTE[(st.teams.length + joined.length) % this.PALETTE.length], viaPhone: true });
+        });
+        return {
+          liveTeams: teamsData,
+          teams: joined.length ? [...st.teams, ...joined] : st.teams,
+        };
+      });
     });
   }
   _syncLiveQuestion() {
@@ -629,8 +667,13 @@ class Component extends DCLogic {
     this.playGong();
     this.setState(s => {
       const idx = s.rounds.findIndex(r => r.id === s.currentRoundId);
-      const next = (idx >= 0 && idx < s.rounds.length - 1) ? s.rounds[idx + 1].id : s.currentRoundId;
-      return { currentRoundId: next, timerRemaining: s.timerDuration, timerRunning: false };
+      const next = (idx >= 0 && idx < s.rounds.length - 1) ? s.rounds[idx + 1] : null;
+      return {
+        currentRoundId: next ? next.id : s.currentRoundId,
+        timerRemaining: s.timerDuration,
+        timerRunning: false,
+        loadCat: next && next.catId ? next.catId : s.loadCat,
+      };
     });
     if (this._tick) { clearInterval(this._tick); this._tick = null; }
   }
@@ -640,7 +683,7 @@ class Component extends DCLogic {
     const usedQuestionKeys = this.state.usedQuestionKeys || {};
     const liveCode = this.state.liveSessionCode;
     if (liveCode && window.fbEndSession) window.fbEndSession(liveCode).catch(() => {});
-    if (this._voteUnsub) { this._voteUnsub(); this._voteUnsub = null; }
+    if (this._teamsUnsub) { this._teamsUnsub(); this._teamsUnsub = null; }
     try { localStorage.removeItem(this.KEY); } catch (e) {}
     this.setState(Object.assign({}, this.seed(), { newTeamName: '', timerRemaining: 60, timerRunning: false, usedQuestionKeys }));
   }
@@ -746,7 +789,20 @@ class Component extends DCLogic {
     const rid = this.state.currentRoundId; const qs = this.state.questions[rid] || [];
     if (!qs.length) return;
     const idx = this.state.qIndex[rid] || 0; const key = rid + ':' + idx;
-    this.setState(st => ({ revealed: Object.assign({}, st.revealed, { [key]: true }) }));
+    if (this.state.revealed[key]) return; // schon aufgedeckt — keine doppelte Punktevergabe
+    const q = qs[idx];
+    const correctIndex = q.options.indexOf(q.correct);
+    const liveTeams = this.state.liveTeams || {};
+    this.setState(st => {
+      const scores = Object.assign({}, st.scores);
+      Object.keys(liveTeams).forEach(uid => {
+        const v = liveTeams[uid] && liveTeams[uid].votes && liveTeams[uid].votes[key];
+        if (v === correctIndex) {
+          scores[uid] = Object.assign({}, scores[uid], { [rid]: ((scores[uid] && scores[uid][rid]) || 0) + 1 });
+        }
+      });
+      return { revealed: Object.assign({}, st.revealed, { [key]: true }), scores };
+    });
   }
 
   toggleCat(id) {
@@ -861,9 +917,9 @@ class Component extends DCLogic {
     const diffLabels = { easy: 'Leicht', medium: 'Mittel', hard: 'Schwer', custom: 'Eigene' };
     const liveActive = !!s.liveSessionCode;
     let liveVoteCounts = null, liveVoteTotal = 0;
-    if (liveActive && s.liveVotes && curQ) {
+    if (liveActive && s.liveTeams && curQ) {
       liveVoteCounts = curQ.options.map(() => 0);
-      Object.values(s.liveVotes).forEach(p => {
+      Object.values(s.liveTeams).forEach(p => {
         const v = p && p.votes && p.votes[revealKey];
         if (typeof v === 'number' && liveVoteCounts[v] !== undefined) { liveVoteCounts[v]++; liveVoteTotal++; }
       });
@@ -883,7 +939,7 @@ class Component extends DCLogic {
       };
     }) : [];
     const liveJoinUrl = (typeof location !== 'undefined') ? (location.origin + location.pathname.replace(/index\.html$/, '') + 'play.html') : '';
-    const liveParticipantCount = s.liveVotes ? Object.keys(s.liveVotes).length : 0;
+    const liveParticipantCount = s.liveTeams ? Object.keys(s.liveTeams).length : 0;
     const selCats = s.selectedCats || [];
     const catOptions = selCats.length > 0
       ? [{ id: '', label: 'Beliebige Auswahl' }, ...this.TRIVIA_CATS.filter(c => selCats.includes(c.id))]
@@ -904,7 +960,7 @@ class Component extends DCLogic {
       nav,
       isSetup: view === 'setup', isPlay: view === 'play', isResults: view === 'results',
       // setup
-      teamRows: teams.map(t => ({ name: t.name, color: t.color, monogram: t.monogram, onRemove: () => this.removeTeam(t.id) })),
+      teamRows: teams.map(t => ({ name: t.name, color: t.color, monogram: t.monogram, viaPhone: !!t.viaPhone, onRemove: () => this.removeTeam(t.id) })),
       roundRows: s.rounds.map((r, i) => ({ name: r.name, num: i + 1, onRemove: () => this.removeRound(r.id) })),
       teamCountLabel: teams.length + ' / 10',
       roundCountLabel: String(s.rounds.length),
@@ -929,6 +985,8 @@ class Component extends DCLogic {
       liveSessionCode: s.liveSessionCode || '', liveJoinUrl, liveParticipantCount,
       liveParticipantLabel: liveParticipantCount + (liveParticipantCount === 1 ? ' Handy verbunden' : ' Handys verbunden'),
       startLiveSession: () => this.startLiveSession(), stopLiveSession: () => this.stopLiveSession(),
+      showVoteProgress: liveActive && hasQuestions && liveParticipantCount > 0 && !isRevealed,
+      liveVoteProgressLabel: liveVoteTotal + ' von ' + liveParticipantCount + (liveParticipantCount === 1 ? ' Team hat' : ' Teams haben') + ' abgestimmt',
       // results
       podium, standings, winnerHeadline,
       backToPlay: () => this.backToPlay(), newGame: () => this.newGame(), resetAll: () => this.resetAll(),
